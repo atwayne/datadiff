@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Task>
+  <Sources>
+    <Source name="UAT">
+      <ConnectionString></ConnectionString>
+      <QueryString></QueryString>
+    </Source>
+    <Source name="QA">
+      <ConnectionString></ConnectionString>
+      <QueryString></QueryString>
+    </Source>
+  </Sources>
+  <Fields>
+    <Field type="" isKey="True"></Field>
+    <Field type=""></Field>
+    <Field type=""></Field>
+  </Fields>
+  <Report path="E:\report.xlsx"/>
+</Task>

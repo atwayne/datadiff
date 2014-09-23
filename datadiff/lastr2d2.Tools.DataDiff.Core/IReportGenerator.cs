@@ -1,5 +1,4 @@
-﻿using System;
-namespace lastr2d2.Tools.DataDiff.Core
+﻿namespace lastr2d2.Tools.DataDiff.Core
 {
     interface IReportGenerator
     {

@@ -1,9 +1,7 @@
-﻿using lastr2d2.Tools.DataDiff.Core;
+﻿using System.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Data;
 
-namespace lastr2d2.Tools.DataDiff.CoreTests
+namespace lastr2d2.Tools.DataDiff.Core.Tests
 {
     
     
