@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Data;
-using System.IO;
+using lastr2d2.Tools.DataDiff.Core;
+using lastr2d2.Tools.DataDiff.Core.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace lastr2d2.Tools.DataDiff.Core.Tests
+namespace lastr2d2.Tools.DataDiff.CoreTests
 {
-
-
     /// <summary>
     ///This is a test class for DataTableComparatorTest and is intended
     ///to contain all DataTableComparatorTest Unit Tests
     ///</summary>
     [TestClass()]
-    public class DataTableComparatorTest
+    public class DataTableMergerTest
     {
-
-
         private TestContext testContextInstance;
 
         /// <summary>
@@ -35,7 +32,8 @@ namespace lastr2d2.Tools.DataDiff.Core.Tests
         }
 
         #region Additional test attributes
-        // 
+
+        //
         //You can use the following additional attributes as you write your tests:
         //
         //Use ClassInitialize to run code before running the first test in the class
@@ -62,8 +60,8 @@ namespace lastr2d2.Tools.DataDiff.Core.Tests
         //{
         //}
         //
-        #endregion
 
+        #endregion Additional test attributes
 
         /// <summary>
         ///A test for GetDifference
@@ -71,51 +69,20 @@ namespace lastr2d2.Tools.DataDiff.Core.Tests
         [TestMethod()]
         public void GetDifferenceTest_NoDifference()
         {
-            DataTableComparator target = new DataTableComparator();
-            DataTable firstTable = TestHelper.MockDataTable("test");
+            DataTable firstTable = ExcelGeneratorTests.MockDataTable("firstTable");
             DataTable secondTable = firstTable.Copy();
+            DataTable expected = null; // TODO: Initialize to an appropriate value
             DataTable actual;
-            
+            actual = DataTableMerger.Merge(firstTable, secondTable);
 
-            //var fields = new List<Field>() { 
-            //    new Field(){
-            //        Name = "guid",
-            //        IsKey = true,
-            //        Type = typeof(Guid)
-            //    },
-            //    new Field(){
-            //        Name = "string",
-            //        IsKey = false,
-            //        Type = typeof(string)
-            //    },
-            //    new Field(){
-            //        Name = "datetime",
-            //        IsKey = false,
-            //        Type = typeof(DateTime)
-            //    },
-            //    new Field(){
-            //        Name = "double",
-            //        IsKey = false,
-            //        Type = typeof(double)
-            //    },
-            //    new Field(){
-            //        Name = "int",
-            //        IsKey = false,
-            //        Type = typeof(int)
-            //    },
-            //};
 
-            actual = target.Merge(firstTable, secondTable, null, "left", "right");
             var path = string.Format(@"E:\Test_{0}.xlsx", DateTime.Now.Ticks);
             var excelExport = new ExcelGenerator();
-            excelExport.Export(firstTable, path, "left");
-            excelExport.Export(secondTable, path, "right");
+            excelExport.Export(firstTable, path, "first");
+            excelExport.Export(secondTable, path, "second");
             excelExport.Export(actual, path, "diff");
 
-            Assert.IsTrue(File.Exists(path));
-            File.Delete(path);
+            Assert.AreEqual(expected, actual);
         }
-
-
     }
 }

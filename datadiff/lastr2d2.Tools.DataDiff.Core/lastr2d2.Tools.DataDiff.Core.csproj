@@ -50,15 +50,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataTableComparator.cs" />
+    <Compile Include="DataTableMerger.cs" />
     <Compile Include="ExcelGenerator.cs" />
     <Compile Include="FieldComparer.cs" />
     <Compile Include="FieldCompareResult.cs" />
     <Compile Include="IDataHelper.cs" />
     <Compile Include="IReportGenerator.cs" />
     <Compile Include="Model\Field.cs" />
-    <Compile Include="Model\Source.cs" />
-    <Compile Include="Model\Task.cs" />
+    <Compile Include="Model\Task.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Model\TaskColumns.cs" />
+    <Compile Include="Model\TaskGap.cs" />
+    <Compile Include="Model\TaskReport.cs" />
+    <Compile Include="Model\TaskSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQLServerHelper.cs" />
   </ItemGroup>

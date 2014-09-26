@@ -6,8 +6,11 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
     public class Field
     {
         public Type Type { get; set; }
+
         public bool IsKey { get; set; }
+
         public string Name { get; set; }
+
         public double Gap { get; set; }
 
         private static HashSet<Type> NumericTypes = new HashSet<Type>
@@ -30,6 +33,5 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
                        NumericTypes.Contains(Nullable.GetUnderlyingType(this.Type));
             }
         }
-
     }
 }

@@ -65,6 +65,7 @@
     <Content Include="config.xml">
       <TransformOnBuild>true</TransformOnBuild>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <None Include="packages.config" />
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />

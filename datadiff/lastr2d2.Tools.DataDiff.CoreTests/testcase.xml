@@ -1,19 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Task>
   <Sources>
-    <Source name="PROD">
-      <ConnectionString></ConnectionString>
-      <QueryString>
-        SELECT * FROM MUREX_CDS_DP_FEED
-        WHERE AsOfDate = '20140924'
-      </QueryString>
+    <Source name="UAT">
+      <ConnectionString>UAT ConnectionString</ConnectionString>
+      <QueryString>UAT QueryString</QueryString>
     </Source>
     <Source name="QA">
-      <ConnectionString></ConnectionString>
-      <QueryString>
-        SELECT * FROM MUREX_CDS_DP_FEED
-        WHERE AsOfDate = '20140924'
-      </QueryString>
+      <ConnectionString>QA ConnectionString</ConnectionString>
+      <QueryString>QA QueryString</QueryString>
     </Source>
   </Sources>
   <Columns>
@@ -23,7 +17,7 @@
         <PrimaryColumns>Id</PrimaryColumns>
         <PrimaryColumns>FirstName,LastName</PrimaryColumns>        
     -->
-    <PrimaryColumns>Deal,TransactionId,Id,ScenarioID</PrimaryColumns>
+    <PrimaryColumns>PrimaryColumn1,PrimaryColumn2</PrimaryColumns>
     <!--
       Put columns you want to compare here, join two or more columns by ","
       Let it empty here if you want to compare all columns
@@ -33,11 +27,16 @@
         <CompareColumns>DV01</CompareColumns>
         <CompareColumns>DV01,Dollor_DV01</CompareColumns>
     -->
-    <CompareColumns>Delta_2,Delta_5,Delta_10,Delta_30,Gamma_2,Gamma_5,Gamma_10,Gamma_30</CompareColumns>
+    <CompareColumns>CompareColumn1,CompareColumn2</CompareColumns>
   </Columns>
   <Gaps>
     <Gap>
-      <Value>0.1</Value>
+      <Value>0.95</Value>
+      <Columns>CompareColumn1,CompareColumn2</Columns>
+    </Gap>
+    <Gap>
+      <Value>0.98</Value>
+      <Columns>CompareColumn3,CompareColumn4</Columns>
     </Gap>
   </Gaps>
   <Report path="E:\report.xlsx"/>

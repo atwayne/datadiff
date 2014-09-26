@@ -1,5 +1,7 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics.Contracts;
+using System;
 using System.IO;
 using ClosedXML.Excel;
 
@@ -30,6 +32,19 @@ namespace lastr2d2.Tools.DataDiff.Core
             }
 
             workbook.SaveAs(path);
+        }
+
+        private void Highlight(IXLWorksheet worksheet)
+        {
+            // hide all gap columns
+            var headerRow = worksheet.FirstRowUsed();
+
+        }
+
+        private List<int> FindColumnsByName(string name) { 
+
+            //TODO:
+            throw new NotImplementedException();
         }
     }
 }

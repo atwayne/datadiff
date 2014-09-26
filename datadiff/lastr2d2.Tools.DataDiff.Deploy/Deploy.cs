@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Linq;
 using System.Xml.Linq;
 using lastr2d2.Tools.DataDiff.Core;
@@ -10,46 +11,28 @@ namespace lastr2d2.Tools.DataDiff.Deploy
     {
         private static void Main()
         {
-            var xmlDocument = XDocument.Load("config.xml");
-            var root = xmlDocument.Root;
-            var sources = root.Element("Sources").Elements("Source").ToArray();
+            var task = Task.LoadFromXml("config.xml");
 
-            var leftSource = sources[0];
-            var rightSource = sources[1];
+            var leftDataTable = PrepareDataTable(task, 0);
+            var rightDataTable = PrepareDataTable(task, 1);
 
-            var leftAlias = leftSource.Attribute("name").Value;
-            var rightAlias = rightSource.Attribute("name").Value;
+            var mergeResult = DataTableMerger.Merge(leftDataTable, rightDataTable);
 
-            var leftConnectionString = leftSource.Element("ConnectionString").Value;
-            var rightConnectionString = rightSource.Element("ConnectionString").Value;
+            var execelGenerator = new ExcelGenerator();
+            execelGenerator.Export(leftDataTable, task.Report.Path, leftDataTable.TableName);
+            execelGenerator.Export(rightDataTable, task.Report.Path, rightDataTable.TableName);
+            execelGenerator.Export(mergeResult, task.Report.Path, "Result");
+        }
 
-            var leftQuery = leftSource.Element("QueryString").Value;
-            var rightQuery = rightSource.Element("QueryString").Value;
+        private static DataTable PrepareDataTable(Task task, int sourceIndex)
+        {
+            var source = task.Sources[sourceIndex];
+            var sqlServer = new SQLServerHelper(source.ConnectionString);
+            var dataTable = sqlServer.GetDataTable(source.QueryString);
+            dataTable.TableName = source.Name;
 
-            var reportPath = root.Element("Report").Attribute("path").Value;
-
-            var fields = root.Element("Fields").Elements("Field")
-                .Select(l => new Field()
-                {
-                    Name = l.Value,
-                    IsKey = l.Attributes("isKey").Any() && l.Attribute("isKey").Value.Equals("True", StringComparison.CurrentCultureIgnoreCase),
-                    Type = null
-                }).ToList();
-
-            var leftSqlServerHelper = new SQLServerHelper(leftConnectionString);
-            var rightSqlServerHelper = new SQLServerHelper(rightConnectionString);
-
-            var leftResult = leftSqlServerHelper.GetDataTable(leftQuery);
-            var rightResult = rightSqlServerHelper.GetDataTable(rightQuery);
-
-            var target = new DataTableComparator();
-            var diff = target.Merge(leftResult, rightResult, fields, leftAlias, rightAlias);
-
-            var excelExport = new ExcelGenerator();
-            excelExport.Export(leftResult, reportPath, leftAlias);
-            excelExport.Export(rightResult, reportPath, rightAlias);
-            excelExport.Export(diff, reportPath, "Diff");
-
+            dataTable.PrimaryKey = task.Columns.PrimaryColumns.Select(column => dataTable.Columns[column]).ToArray();
+            return dataTable;
         }
     }
 }
