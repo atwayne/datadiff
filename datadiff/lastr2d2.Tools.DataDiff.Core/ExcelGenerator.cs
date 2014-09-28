@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+﻿using ClosedXML.Excel;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
-using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Spreadsheet;
 using DataTable = System.Data.DataTable;
 
 namespace lastr2d2.Tools.DataDiff.Core
@@ -90,6 +89,7 @@ namespace lastr2d2.Tools.DataDiff.Core
         private static void ApplyFormula(IList<IXLRow> contentRows, string equalFormulaFormat, string missingFormulaFormat,
             string similarFormulaFormat, string notEqualFormulaFormat)
         {
+            // ReSharper disable once PossibleNullReferenceException
             var worksheet = contentRows.FirstOrDefault().Worksheet;
             var left = worksheet.FirstColumnUsed().ColumnNumber();
             var right = worksheet.LastColumnUsed().ColumnNumber();

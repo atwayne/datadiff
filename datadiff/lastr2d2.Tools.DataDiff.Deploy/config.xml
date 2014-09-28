@@ -2,17 +2,35 @@
 <Task>
   <Sources>
     <Source name="PROD">
-      <ConnectionString></ConnectionString>
+      <ConnectionString>Server=X230\SQLEXPRESS;Database=Northwind;Trusted_Connection=Yes;</ConnectionString>
       <QueryString>
-        SELECT * FROM MUREX_CDS_DP_FEED
-        WHERE AsOfDate = '20140924'
+        SELECT [ProductID]
+        ,[ProductName]
+        ,[SupplierID]
+        ,[CategoryID]
+        ,[QuantityPerUnit]
+        ,[UnitPrice]
+        ,[UnitsInStock]
+        ,[UnitsOnOrder]
+        ,[ReorderLevel]
+        ,[Discontinued]
+        FROM [Northwind].[dbo].[Products]
       </QueryString>
     </Source>
     <Source name="QA">
-      <ConnectionString></ConnectionString>
+      <ConnectionString>Server=X230\SQLEXPRESS;Database=Northwind;Trusted_Connection=Yes;</ConnectionString>
       <QueryString>
-        SELECT * FROM MUREX_CDS_DP_FEED
-        WHERE AsOfDate = '20140924'
+        SELECT [ProductID]
+        ,[ProductName]
+        ,[SupplierID]
+        ,[CategoryID]
+        ,[QuantityPerUnit]
+        ,[UnitPrice]
+        ,[UnitsInStock]
+        ,[UnitsOnOrder]
+        ,[ReorderLevel]
+        ,[Discontinued]
+        FROM [Northwind].[dbo].[Products_BAK]
       </QueryString>
     </Source>
   </Sources>
@@ -23,7 +41,7 @@
         <PrimaryColumns>Id</PrimaryColumns>
         <PrimaryColumns>FirstName,LastName</PrimaryColumns>        
     -->
-    <PrimaryColumns>Deal,TransactionId,Id,ScenarioID</PrimaryColumns>
+    <PrimaryColumns>ProductID,ProductName</PrimaryColumns>
     <!--
       Put columns you want to compare here, join two or more columns by ","
       Let it empty here if you want to compare all columns
@@ -33,12 +51,17 @@
         <CompareColumns>DV01</CompareColumns>
         <CompareColumns>DV01,Dollor_DV01</CompareColumns>
     -->
-    <CompareColumns>Delta_2,Delta_5,Delta_10,Delta_30,Gamma_2,Gamma_5,Gamma_10,Gamma_30</CompareColumns>
+    <CompareColumns></CompareColumns>
   </Columns>
   <Gaps>
     <Gap>
+      <Columns>UnitPrice</Columns>
       <Value>0.1</Value>
     </Gap>
+    <Gap>
+      <Columns>UnitsInStock</Columns>
+      <Value>0.2</Value>
+    </Gap>
   </Gaps>
-  <Report path="E:\report.xlsx"/>
+  <Report path="D:\report.xlsx"/>
 </Task>

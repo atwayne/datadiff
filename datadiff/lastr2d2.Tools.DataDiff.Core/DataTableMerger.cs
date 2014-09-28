@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using lastr2d2.Tools.DataDiff.Core.Model;
@@ -43,7 +44,7 @@ namespace lastr2d2.Tools.DataDiff.Core
             foreach (var row in sourceTable.AsEnumerable())
             {
                 var keys = new object[sourceTable.PrimaryKey.Count()];
-                
+
                 for (var i = 0; i < keys.Length; i++)
                 {
                     keys[i] = row[sourceTable.PrimaryKey[i].ColumnName];
@@ -63,7 +64,8 @@ namespace lastr2d2.Tools.DataDiff.Core
                 foreach (var key in compareKeys)
                 {
                     newRow[string.Format("{0}_{1}", key.Name, alias)] = row[key.Name];
-                    newRow[string.Format("{0}_{1}", key.Name, referAlias)] = matchingRow[key.Name];
+                    newRow[string.Format("{0}_{1}", key.Name, referAlias)] =
+                        matchingRow == null ? DBNull.Value : matchingRow[key.Name];
                     newRow[string.Format("{0}_{1}", key.Name, "Gap")] = key.Gap;
                 }
                 result.Rows.Add(newRow);

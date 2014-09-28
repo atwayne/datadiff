@@ -29,7 +29,7 @@ namespace lastr2d2.Tools.DataDiff.Deploy
             execelGenerator.Highlight(worksheet,
                 "_" + leftDataTable.TableName,
                 "_" + rightDataTable.TableName);
-            workbook.Save();
+            workbook.SaveAs(task.Report.Path);
         }
 
         private static DataTable PrepareDataTable(Task task, int sourceIndex)
