@@ -6,10 +6,6 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
     [XmlTypeAttribute(AnonymousType = true)]
     public class TaskColumns
     {
-        private string primaryColumnsField;
-
-        private string compareColumnsField;
-
         [XmlIgnore]
         public string[] PrimaryColumns
         {
@@ -29,29 +25,9 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         }
 
         [XmlElement("PrimaryColumns")]
-        public string PrimaryColumnsString
-        {
-            get
-            {
-                return primaryColumnsField;
-            }
-            set
-            {
-                primaryColumnsField = value;
-            }
-        }
+        public string PrimaryColumnsString { get; set; }
 
         [XmlElement("CompareColumns")]
-        public string CompareColumnsString
-        {
-            get
-            {
-                return compareColumnsField;
-            }
-            set
-            {
-                compareColumnsField = value;
-            }
-        }
+        public string CompareColumnsString { get; set; }
     }
 }

@@ -7,41 +7,17 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
     [XmlTypeAttribute(AnonymousType = true)]
     public class TaskGap
     {
-        private double valueField;
-
-        private string columnsField;
-
-        public double Value
-        {
-            get
-            {
-                return valueField;
-            }
-            set
-            {
-                valueField = value;
-            }
-        }
+        public double Value { get; set; }
 
         [XmlElement("Columns")]
-        public string ColumnsString
-        {
-            get
-            {
-                return columnsField;
-            }
-            set
-            {
-                columnsField = value;
-            }
-        }
+        public string ColumnsString { get; set; }
 
         [XmlIgnore]
         public string[] Columns
         {
             get
             {
-                return ColumnsString.Split(new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                return ColumnsString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             }
         }
 
