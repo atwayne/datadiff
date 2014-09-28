@@ -15,7 +15,7 @@ namespace lastr2d2.Tools.DataDiff.Core
             Contract.Requires(dataTable != null);
             Contract.Requires(!string.IsNullOrWhiteSpace(dataTable.TableName) || !string.IsNullOrWhiteSpace(sheetName));
             sheetName = sheetName ?? dataTable.TableName;
-            XLWorkbook workbook = string.IsNullOrEmpty(path) || !File.Exists(path) ? 
+            XLWorkbook workbook = string.IsNullOrEmpty(path) || !File.Exists(path) ?
                 new XLWorkbook() : new XLWorkbook(path);
 
 
@@ -99,21 +99,27 @@ namespace lastr2d2.Tools.DataDiff.Core
                 var range = worksheet.Range(row.RowNumber(), left, row.RowNumber(), right);
 
                 range.AddConditionalFormat().WhenIsTrue(
-                    string.Format(equalFormulaFormat, row.RowNumber()).TrimWhiteSpaces())
+                    PrepareFormula(string.Format(equalFormulaFormat, row.RowNumber())))
                     .Fill.SetBackgroundColor(XLColor.Green);
 
                 range.AddConditionalFormat().WhenIsTrue(
-                    string.Format(missingFormulaFormat, row.RowNumber()).TrimWhiteSpaces())
+                    PrepareFormula(string.Format(missingFormulaFormat, row.RowNumber())))
                     .Fill.SetBackgroundColor(XLColor.Red);
 
                 range.AddConditionalFormat().WhenIsTrue(
-                    string.Format(similarFormulaFormat, row.RowNumber()).TrimWhiteSpaces())
+                    PrepareFormula(string.Format(similarFormulaFormat, row.RowNumber())))
                     .Fill.SetBackgroundColor(XLColor.GreenRyb);
 
-                range.AddConditionalFormat().WhenIsTrue(string.Format(
-                    notEqualFormulaFormat, row.RowNumber()).TrimWhiteSpaces())
+                range.AddConditionalFormat().WhenIsTrue(
+                    PrepareFormula(string.Format(notEqualFormulaFormat, row.RowNumber())))
                     .Fill.SetBackgroundColor(XLColor.Yellow);
             }
+        }
+
+        private static string PrepareFormula(string formula)
+        {
+            formula = formula.TrimWhiteSpaces();
+            return formula;
         }
 
         private static void CreateFormula(KeyValuePair<string, IXLAddress> leftColumn, KeyValuePair<string, IXLAddress> rightColumn, KeyValuePair<string, IXLAddress> gapColumn,
@@ -133,9 +139,22 @@ namespace lastr2d2.Tools.DataDiff.Core
                 //AND(NOT($F2),$C2<>0,$A2<>$B2,ABS($A2-$B2)<$C2)
                 @"AND(
                     NOT({0}),
-                    ${3}{{0}}<>0,
-                    ${1}{{0}}<>${2}{{0}},
-                    ABS(${1}{{0}}-${2}{{0}})<${3}{{0}}
+                    IF(
+                        AND(
+                            ISNUMBER(${1}{{0}}),
+                            ISNUMBER(${2}{{0}})
+                        ),
+                        AND(
+                            ${3}{{0}}<>0,
+                            ${1}{{0}}<>${2}{{0}},
+                            IF(
+                                ${1}{{0}}=0,
+                                FALSE,
+                                ABS(${1}{{0}}-${2}{{0}})/${1}{{0}}<${3}{{0}}
+                            )
+                        ),
+                        FALSE
+                    )
                 )",
                 missingFormulaFormat,
                 leftColumn.Value.ColumnLetter,
