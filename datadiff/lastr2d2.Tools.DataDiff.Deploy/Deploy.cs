@@ -13,7 +13,7 @@ namespace lastr2d2.Tools.DataDiff.Deploy
 
             var leftDataTable = PrepareDataTable(task, 0);
             var rightDataTable = PrepareDataTable(task, 1);
-            var mergeResult = DataTableMerger.Merge(leftDataTable, rightDataTable);
+            var mergeResult = DataTableMerger.Merge(leftDataTable, rightDataTable, gapSettingForNumbericFields: task.GapMapping);
 
             ExportToExcel(task, leftDataTable, rightDataTable, mergeResult);
         }
