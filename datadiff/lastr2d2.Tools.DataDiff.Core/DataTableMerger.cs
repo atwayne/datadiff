@@ -15,7 +15,7 @@ namespace lastr2d2.Tools.DataDiff.Core
             leftTableAlias = leftTableAlias ?? leftTable.TableName;
             rightTableAlias = rightTableAlias ?? rightTable.TableName;
 
-            var keyFields = fields.Where(field => field.IsKey);
+            var keyFields = fields.Where(field => field.IsKey).ToList();
 
             var result = rightTable.Clone();
             var compareKeys = fields.Where(field => !field.IsKey).ToList();
@@ -29,8 +29,8 @@ namespace lastr2d2.Tools.DataDiff.Core
                 result.Columns.Add(string.Format("{0}_{1}", key.Name, "Gap"), typeof(double));
             });
 
-            Merge(result, leftTable, rightTable, leftTableAlias, rightTableAlias, keyFields, compareKeys, FieldCompareResult.MissingInRight);
-            Merge(result, rightTable, leftTable, rightTableAlias, leftTableAlias, keyFields, compareKeys, FieldCompareResult.MissingInLeft);
+            Merge(result, leftTable, rightTable, leftTableAlias, rightTableAlias, keyFields, compareKeys);
+            Merge(result, rightTable, leftTable, rightTableAlias, leftTableAlias, keyFields, compareKeys);
 
             return result;
         }
@@ -38,14 +38,13 @@ namespace lastr2d2.Tools.DataDiff.Core
         private static void Merge(DataTable result,
             DataTable sourceTable, DataTable referTable,
             string alias, string referAlias,
-            IEnumerable<Field> keyFields, List<Field> compareKeys,
-            FieldCompareResult missingStatus)
+            IList<Field> keyFields, List<Field> compareKeys)
         {
             foreach (var row in sourceTable.AsEnumerable())
             {
                 var keys = new object[sourceTable.PrimaryKey.Count()];
                 
-                for (int i = 0; i < keys.Length; i++)
+                for (var i = 0; i < keys.Length; i++)
                 {
                     keys[i] = row[sourceTable.PrimaryKey[i].ColumnName];
                 }
@@ -66,15 +65,6 @@ namespace lastr2d2.Tools.DataDiff.Core
                     newRow[string.Format("{0}_{1}", key.Name, alias)] = row[key.Name];
                     newRow[string.Format("{0}_{1}", key.Name, referAlias)] = matchingRow[key.Name];
                     newRow[string.Format("{0}_{1}", key.Name, "Gap")] = key.Gap;
-                    //if (matchingRow != null)
-                    //{
-                    //    newRow[string.Format("{0}_{1}", key.Name, referAlias)] = matchingRow[key.Name];
-                    //    newRow[string.Format("{0}_{1}", key.Name, "diff")] = FieldCompare.Compare(row, matchingRow, key).ToString();
-                    //}
-                    //else
-                    //{
-                    //    newRow[string.Format("{0}_{1}", key.Name, "diff")] = missingStatus.ToString();
-                    //}
                 }
                 result.Rows.Add(newRow);
                 result.AcceptChanges();
@@ -87,7 +77,7 @@ namespace lastr2d2.Tools.DataDiff.Core
             for (int i = 0; i < sourceTable.Columns.Count; i++)
             {
                 var column = sourceTable.Columns[i];
-                fields.Add(new Field()
+                fields.Add(new Field
                 {
                     Name = column.ColumnName,
                     Type = column.DataType,

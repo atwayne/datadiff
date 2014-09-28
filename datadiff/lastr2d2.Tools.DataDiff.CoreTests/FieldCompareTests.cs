@@ -1,13 +1,14 @@
 ﻿using System;
+using lastr2d2.Tools.DataDiff.Core;
 using lastr2d2.Tools.DataDiff.Core.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace lastr2d2.Tools.DataDiff.Core.Tests
+namespace lastr2d2.Tools.DataDiff.CoreTests
 {
-    [TestClass()]
+    [TestClass]
     public class FieldCompareTests
     {
-        [TestMethod()]
+        [TestMethod]
         public void CompareTest_DateTime_Identical()
         {
             var leftDateTime = DateTime.Now;
@@ -19,7 +20,7 @@ namespace lastr2d2.Tools.DataDiff.Core.Tests
             leftRow["datetime"] = leftDateTime;
             rightRow["datetime"] = rightDateTime;
 
-            var field = new Field()
+            var field = new Field
             {
                 Name = "datetime",
                 IsKey = false,
@@ -33,7 +34,7 @@ namespace lastr2d2.Tools.DataDiff.Core.Tests
         }
 
 
-        [TestMethod()]
+        [TestMethod]
         public void CompareTest_DateTime_QuiteDifferent()
         {
             var leftDateTime = DateTime.Now;
@@ -45,7 +46,7 @@ namespace lastr2d2.Tools.DataDiff.Core.Tests
             leftRow["datetime"] = leftDateTime;
             rightRow["datetime"] = rightDateTime;
 
-            var field = new Field()
+            var field = new Field
             {
                 Name = "datetime",
                 IsKey = false,
@@ -58,7 +59,7 @@ namespace lastr2d2.Tools.DataDiff.Core.Tests
             Assert.AreEqual(expected, actual);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void CompareTest_Double_Identical()
         {
             var leftDouble = 1.5e7;
@@ -70,7 +71,7 @@ namespace lastr2d2.Tools.DataDiff.Core.Tests
             leftRow["double"] = leftDouble;
             rightRow["double"] = rightDouble;
 
-            var field = new Field()
+            var field = new Field
             {
                 Name = "double",
                 IsKey = false,
@@ -83,7 +84,7 @@ namespace lastr2d2.Tools.DataDiff.Core.Tests
             Assert.AreEqual(expected, actual);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void CompareTest_Double_Similar()
         {
             var leftDouble = 1.5e7;
@@ -95,7 +96,7 @@ namespace lastr2d2.Tools.DataDiff.Core.Tests
             leftRow["double"] = leftDouble;
             rightRow["double"] = rightDouble;
 
-            var field = new Field()
+            var field = new Field
             {
                 Name = "double",
                 IsKey = false,
@@ -110,7 +111,7 @@ namespace lastr2d2.Tools.DataDiff.Core.Tests
         }
 
 
-        [TestMethod()]
+        [TestMethod]
         public void CompareTest_Double_QuiteDifferent()
         {
             var leftDouble = 1.5e7;
@@ -122,7 +123,7 @@ namespace lastr2d2.Tools.DataDiff.Core.Tests
             leftRow["double"] = leftDouble;
             rightRow["double"] = rightDouble;
 
-            var field = new Field()
+            var field = new Field
             {
                 Name = "double",
                 IsKey = false,

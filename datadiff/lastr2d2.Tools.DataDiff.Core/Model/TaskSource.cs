@@ -3,7 +3,7 @@
 namespace lastr2d2.Tools.DataDiff.Core.Model
 {
     [XmlTypeAttribute(AnonymousType = true)]
-    public partial class TaskSource
+    public class TaskSource
     {
         private string connectionStringField;
 
@@ -15,11 +15,11 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return this.connectionStringField;
+                return connectionStringField;
             }
             set
             {
-                this.connectionStringField = value;
+                connectionStringField = value;
             }
         }
 
@@ -27,11 +27,11 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return this.queryStringField;
+                return queryStringField;
             }
             set
             {
-                this.queryStringField = value;
+                queryStringField = value;
             }
         }
 
@@ -40,11 +40,11 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return this.nameField;
+                return nameField;
             }
             set
             {
-                this.nameField = value;
+                nameField = value;
             }
         }
     }

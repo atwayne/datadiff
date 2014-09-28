@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 namespace lastr2d2.Tools.DataDiff.Core.Model
 {
     [XmlTypeAttribute(AnonymousType = true)]
-    public partial class TaskColumns
+    public class TaskColumns
     {
         private string primaryColumnsField;
 
@@ -15,7 +15,7 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return PrimaryColumnsString.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                return PrimaryColumnsString.Split(new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             }
         }
 
@@ -24,7 +24,7 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return CompareColumnsString.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                return CompareColumnsString.Split(new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             }
         }
 
@@ -33,11 +33,11 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return this.primaryColumnsField;
+                return primaryColumnsField;
             }
             set
             {
-                this.primaryColumnsField = value;
+                primaryColumnsField = value;
             }
         }
 
@@ -46,11 +46,11 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return this.compareColumnsField;
+                return compareColumnsField;
             }
             set
             {
-                this.compareColumnsField = value;
+                compareColumnsField = value;
             }
         }
     }

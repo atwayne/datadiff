@@ -3,7 +3,7 @@
 namespace lastr2d2.Tools.DataDiff.Core.Model
 {
     [XmlTypeAttribute(AnonymousType = true)]
-    public partial class TaskReport
+    public class TaskReport
     {
         private string pathField;
 
@@ -12,11 +12,11 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return this.pathField;
+                return pathField;
             }
             set
             {
-                this.pathField = value;
+                pathField = value;
             }
         }
     }

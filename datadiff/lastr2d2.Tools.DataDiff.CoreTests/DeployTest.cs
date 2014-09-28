@@ -32,8 +32,7 @@ namespace lastr2d2.Tools.DataDiff.CoreTests
                 qaResult.Columns[""]
             };
 
-            var target = new DataTableComparator();
-            var diff = target.Merge(uatResult, qaResult, null, "UAT", "QA");
+            var diff = DataTableMerger.Merge(uatResult, qaResult, null, "UAT", "QA");
 
             var path = string.Format(@"E:\Test_{0}.xlsx", DateTime.Now.Ticks);
             var excelExport = new ExcelGenerator();

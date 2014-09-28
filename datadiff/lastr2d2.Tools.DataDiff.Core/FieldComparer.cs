@@ -34,6 +34,7 @@ namespace lastr2d2.Tools.DataDiff.Core
                 if (diff < double.Epsilon)
                     return FieldCompareResult.Identical;
 
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
                 if (leftNumber == 0)
                     return FieldCompareResult.QuiteDifferent;
 

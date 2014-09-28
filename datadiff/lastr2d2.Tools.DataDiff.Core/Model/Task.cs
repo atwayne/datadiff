@@ -6,7 +6,7 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
 {
     [XmlTypeAttribute(AnonymousType = true)]
     [XmlRootAttribute(Namespace = "", IsNullable = false)]
-    public partial class Task
+    public class Task
     {
         private TaskSource[] sourcesField;
 
@@ -21,11 +21,11 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return this.sourcesField;
+                return sourcesField;
             }
             set
             {
-                this.sourcesField = value;
+                sourcesField = value;
             }
         }
 
@@ -33,11 +33,11 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return this.columnsField;
+                return columnsField;
             }
             set
             {
-                this.columnsField = value;
+                columnsField = value;
             }
         }
 
@@ -46,11 +46,11 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return this.gapsField;
+                return gapsField;
             }
             set
             {
-                this.gapsField = value;
+                gapsField = value;
             }
         }
 
@@ -75,11 +75,11 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return this.reportField;
+                return reportField;
             }
             set
             {
-                this.reportField = value;
+                reportField = value;
             }
         }
 

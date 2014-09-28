@@ -1,14 +1,14 @@
 ﻿using System;
 using System.IO;
+using lastr2d2.Tools.DataDiff.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-
-namespace lastr2d2.Tools.DataDiff.Core.Tests
+namespace lastr2d2.Tools.DataDiff.CoreTests
 {
-    [TestClass()]
+    [TestClass]
     public class ExcelGeneratorTests
     {
-        [TestMethod()]
+        [TestMethod]
         public void ExportTest_Success()
         {
             var dataTable = TestHelper.MockDataTable("Testcase");

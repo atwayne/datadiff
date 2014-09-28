@@ -1,7 +1,5 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Linq;
-using System.Xml.Linq;
 using lastr2d2.Tools.DataDiff.Core;
 using lastr2d2.Tools.DataDiff.Core.Model;
 
@@ -27,7 +25,7 @@ namespace lastr2d2.Tools.DataDiff.Deploy
         private static DataTable PrepareDataTable(Task task, int sourceIndex)
         {
             var source = task.Sources[sourceIndex];
-            var sqlServer = new SQLServerHelper(source.ConnectionString);
+            var sqlServer = new SqlServerHelper(source.ConnectionString);
             var dataTable = sqlServer.GetDataTable(source.QueryString);
             dataTable.TableName = source.Name;
 

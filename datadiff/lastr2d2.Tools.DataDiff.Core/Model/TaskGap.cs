@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 namespace lastr2d2.Tools.DataDiff.Core.Model
 {
     [XmlTypeAttribute(AnonymousType = true)]
-    public partial class TaskGap
+    public class TaskGap
     {
         private double valueField;
 
@@ -15,11 +15,11 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return this.valueField;
+                return valueField;
             }
             set
             {
-                this.valueField = value;
+                valueField = value;
             }
         }
 
@@ -28,11 +28,11 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return this.columnsField;
+                return columnsField;
             }
             set
             {
-                this.columnsField = value;
+                columnsField = value;
             }
         }
 
@@ -41,7 +41,7 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return ColumnsString.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                return ColumnsString.Split(new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             }
         }
 

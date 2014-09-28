@@ -13,7 +13,7 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
 
         public double Gap { get; set; }
 
-        private static HashSet<Type> NumericTypes = new HashSet<Type>
+        private static readonly HashSet<Type> NumericTypes = new HashSet<Type>
         {
             typeof(int),
             typeof(uint),
@@ -29,8 +29,8 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return NumericTypes.Contains(this.Type) ||
-                       NumericTypes.Contains(Nullable.GetUnderlyingType(this.Type));
+                return NumericTypes.Contains(Type) ||
+                       NumericTypes.Contains(Nullable.GetUnderlyingType(Type));
             }
         }
     }
