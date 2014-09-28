@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="DataTableMerger.cs" />
     <Compile Include="ExcelGenerator.cs" />
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FieldComparer.cs" />
     <Compile Include="FieldCompareResult.cs" />
     <Compile Include="IDataHelper.cs" />

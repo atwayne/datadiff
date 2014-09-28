@@ -8,51 +8,13 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
     [XmlRootAttribute(Namespace = "", IsNullable = false)]
     public class Task
     {
-        private TaskSource[] sourcesField;
+        [XmlArrayItem("Source", IsNullable = false)]
+        public TaskSource[] Sources { get; set; }
 
-        private TaskColumns columnsField;
+        public TaskColumns Columns { get; set; }
 
-        private TaskGap[] gapsField;
-
-        private TaskReport reportField;
-
-        [XmlArrayItemAttribute("Source", IsNullable = false)]
-        public TaskSource[] Sources
-        {
-            get
-            {
-                return sourcesField;
-            }
-            set
-            {
-                sourcesField = value;
-            }
-        }
-
-        public TaskColumns Columns
-        {
-            get
-            {
-                return columnsField;
-            }
-            set
-            {
-                columnsField = value;
-            }
-        }
-
-        [XmlArrayItemAttribute("Gap", IsNullable = false)]
-        public TaskGap[] Gaps
-        {
-            get
-            {
-                return gapsField;
-            }
-            set
-            {
-                gapsField = value;
-            }
-        }
+        [XmlArrayItem("Gap", IsNullable = false)]
+        public TaskGap[] Gaps { get; set; }
 
         [XmlIgnore]
         public Dictionary<string, double> GapMapping
@@ -71,17 +33,7 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
             }
         }
 
-        public TaskReport Report
-        {
-            get
-            {
-                return reportField;
-            }
-            set
-            {
-                reportField = value;
-            }
-        }
+        public TaskReport Report { get; set; }
 
         public static Task LoadFromXml(string path)
         {

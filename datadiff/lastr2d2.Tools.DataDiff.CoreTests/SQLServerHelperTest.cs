@@ -26,7 +26,7 @@ namespace lastr2d2.Tools.DataDiff.CoreTests
         public void GetDataTableTest()
         {
             var connectionString = ""; // TODO: Initialize to an appropriate value
-            var target = new SQLServerHelper(connectionString); 
+            var target = new SqlServerHelper(connectionString); 
             var query = @""; 
             DataTable actual = target.GetDataTable(query);
 
