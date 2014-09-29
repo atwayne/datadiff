@@ -9,29 +9,38 @@ namespace lastr2d2.Tools.DataDiff.Core
     public class DataTableMerger
     {
         public static DataTable Merge(DataTable leftTable, DataTable rightTable,
-            string leftTableAlias = null, string rightTableAlias = null, Dictionary<string, double> gapSettingForNumbericFields = null)
+            List<string> compareColumns = null,
+            string leftTableAlias = null, string rightTableAlias = null, Dictionary<string, double> gapSettingForNumbericColumn = null)
         {
-            var fields = GetFields(leftTable, gapSettingForNumbericFields);
+            var columns = GetAllColumns(leftTable, gapSettingForNumbericColumn);
 
             leftTableAlias = leftTableAlias ?? leftTable.TableName;
             rightTableAlias = rightTableAlias ?? rightTable.TableName;
 
-            var keyFields = fields.Where(field => field.IsKey).ToList();
+            var keyFields = columns.Where(field => field.IsKey).ToList();
 
             var result = rightTable.Clone();
-            var compareKeys = fields.Where(field => !field.IsKey).ToList();
-            compareKeys.ForEach(key =>
+            var nonPrimaryColumns = columns.Where(field => !field.IsKey).ToList();
+            nonPrimaryColumns.ForEach(column =>
             {
-                var columnType = result.Columns[key.Name].DataType;
-                result.Columns.Remove(key.Name);
-
-                result.Columns.Add(string.Format("{0}_{1}", key.Name, leftTableAlias), columnType);
-                result.Columns.Add(string.Format("{0}_{1}", key.Name, rightTableAlias), columnType);
-                result.Columns.Add(string.Format("{0}_{1}", key.Name, "Gap"), typeof(double));
+                var columnType = result.Columns[column.Name].DataType;
+                result.Columns.Remove(column.Name);
+                result.Columns.Add(string.Format("{0}_{1}", column.Name, leftTableAlias), columnType);
+                result.Columns.Add(string.Format("{0}_{1}", column.Name, rightTableAlias), columnType);
             });
 
-            Merge(result, leftTable, rightTable, leftTableAlias, rightTableAlias, keyFields, compareKeys);
-            Merge(result, rightTable, leftTable, rightTableAlias, leftTableAlias, keyFields, compareKeys);
+            compareColumns.ForEach(columnName =>
+            {
+                var column = columns.FirstOrDefault(c => c.Name.Equals(columnName));
+                if (column != null)
+                {
+                    result.Columns.Add(string.Format("{0}_{1}", column.Name, "Gap"), typeof(double));
+                    result.Columns.Add(string.Format("{0}_{1}", column.Name, "Compare"), typeof(double));
+                }
+            });
+
+            Merge(result, leftTable, rightTable, leftTableAlias, rightTableAlias, keyFields, nonPrimaryColumns);
+            Merge(result, rightTable, leftTable, rightTableAlias, leftTableAlias, keyFields, nonPrimaryColumns);
 
             return result;
         }
@@ -73,12 +82,13 @@ namespace lastr2d2.Tools.DataDiff.Core
             }
         }
 
-        private static List<Field> GetFields(DataTable sourceTable, Dictionary<string, double> gapList = null)
+        private static List<Field> GetAllColumns(DataTable sourceTable, Dictionary<string, double> gapList = null)
         {
             var fields = new List<Field>();
             for (int i = 0; i < sourceTable.Columns.Count; i++)
             {
                 var column = sourceTable.Columns[i];
+
                 fields.Add(new Field
                 {
                     Name = column.ColumnName,
