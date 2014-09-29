@@ -29,6 +29,9 @@ namespace lastr2d2.Tools.DataDiff.Core
                 result.Columns.Add(string.Format("{0}_{1}", column.Name, rightTableAlias), columnType);
             });
 
+            if (compareColumns == null || !compareColumns.Any())
+                compareColumns = nonPrimaryColumns.Select(column => column.Name).ToList();
+
             compareColumns.ForEach(columnName =>
             {
                 var column = columns.FirstOrDefault(c => c.Name.Equals(columnName));
