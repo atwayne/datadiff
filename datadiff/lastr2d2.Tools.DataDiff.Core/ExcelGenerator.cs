@@ -30,36 +30,39 @@ namespace lastr2d2.Tools.DataDiff.Core
             return workbook;
         }
 
-        public void Highlight(IXLWorksheet worksheet, string leftSuffix, string rightSuffix, string gapSuffix = "_Gap")
+        public void Highlight(IXLWorksheet worksheet, string leftSuffix, string rightSuffix, string gapSuffix = "_Gap", string compareSuffix = "_Compare")
         {
             var headerRow = worksheet.FirstRowUsed();
-            var sourceColumns = new[] { leftSuffix, rightSuffix, gapSuffix }.SelectMany(suffix =>
+            var sourceColumns = new[] { leftSuffix, rightSuffix, gapSuffix, compareSuffix }.SelectMany(suffix =>
                 FindColumnsBySuffix(headerRow, suffix)
             ).ToList();
 
             var columnNames = sourceColumns.Select(l => l.Key);
-            var underlyingColumns = FindUnderlyingColumns(columnNames, leftSuffix, rightSuffix, gapSuffix);
 
-            // hide gap column
+            // hide gap & compare column
             foreach (var column in sourceColumns)
             {
-                if (column.Key.EndsWith(gapSuffix, StringComparison.OrdinalIgnoreCase))
+                if (column.Key.EndsWith(gapSuffix, StringComparison.OrdinalIgnoreCase)
+                    || column.Key.EndsWith(compareSuffix, StringComparison.OrdinalIgnoreCase))
                 {
                     worksheet.Column(column.Value.ColumnNumber).Hide();
                 }
             }
 
             // create formula
-            var missingFormulaFormats = new List<string>();
-            var notEqualFormulaFormats = new List<string>();
-            var similarFormulaFormats = new List<string>();
-            var equalFormulaFormats = new List<string>();
+            var missingFormulaFormats = new Dictionary<string, string>();
+            var notEqualFormulaFormats = new Dictionary<string, string>();
+            var similarFormulaFormats = new Dictionary<string, string>();
+            var equalFormulaFormats = new Dictionary<string, string>();
 
-            foreach (var column in underlyingColumns)
+            var underlyingColumns = FindUnderlyingColumns(columnNames, leftSuffix, rightSuffix, gapSuffix, compareSuffix);
+
+            foreach (var underlyingColumn in underlyingColumns)
             {
-                var leftName = string.Format("{0}{1}", column, leftSuffix);
-                var rightName = string.Format("{0}{1}", column, rightSuffix);
-                var gapName = string.Format("{0}{1}", column, gapSuffix);
+                var leftName = string.Format("{0}{1}", underlyingColumn, leftSuffix);
+                var rightName = string.Format("{0}{1}", underlyingColumn, rightSuffix);
+                var gapName = string.Format("{0}{1}", underlyingColumn, gapSuffix);
+                var compareName = string.Format("{0}{1}", underlyingColumn, compareSuffix);
 
                 var leftColumn =
                     sourceColumns.FirstOrDefault(l => leftName.Equals(l.Key, StringComparison.OrdinalIgnoreCase));
@@ -67,52 +70,88 @@ namespace lastr2d2.Tools.DataDiff.Core
                     sourceColumns.FirstOrDefault(l => rightName.Equals(l.Key, StringComparison.OrdinalIgnoreCase));
                 var gapColumn =
                     sourceColumns.FirstOrDefault(l => gapName.Equals(l.Key, StringComparison.OrdinalIgnoreCase));
+                var compareColumn =
+                    sourceColumns.FirstOrDefault(l => compareName.Equals(l.Key, StringComparison.OrdinalIgnoreCase));
 
-                CreateFormula(leftColumn, rightColumn, gapColumn, missingFormulaFormats, similarFormulaFormats, equalFormulaFormats, notEqualFormulaFormats);
+                CreateFormula(leftColumn, rightColumn, gapColumn, compareColumn, missingFormulaFormats, similarFormulaFormats, equalFormulaFormats, notEqualFormulaFormats);
             }
 
             var contentRows = worksheet.RowsUsed().Skip(1).ToList();
-            var equalFormulaFormat = string.Format("AND({0})", string.Join(",", equalFormulaFormats));
-            var missingFormulaFormat = string.Format("AND({0})", string.Join(",", missingFormulaFormats));
-            var notEqualFormulaFormat = string.Format("OR({0})", string.Join(",", notEqualFormulaFormats));
-            var similarFormulaFormat = string.Format("AND(NOT({0}),OR({1}))", notEqualFormulaFormat,
-                string.Join(",", similarFormulaFormats));
 
-
-            ApplyFormula(contentRows, equalFormulaFormat, missingFormulaFormat, similarFormulaFormat, notEqualFormulaFormat);
-
-            // adjust width to contents
-            worksheet.ColumnsUsed().ForEach(column => column.AdjustToContents());
+            ApplyFormula(contentRows, compareSuffix,
+                equalFormulaFormats, missingFormulaFormats, similarFormulaFormats, notEqualFormulaFormats);
 
         }
 
-        private static void ApplyFormula(IList<IXLRow> contentRows, string equalFormulaFormat, string missingFormulaFormat,
-            string similarFormulaFormat, string notEqualFormulaFormat)
+        private static void ApplyFormula(IList<IXLRow> contentRows, string compareSuffix,
+            Dictionary<string, string> equalFormulaFormats, Dictionary<string, string> missingFormulaFormats,
+            Dictionary<string, string> similarFormulaFormats, Dictionary<string, string> notEqualFormulaFormats)
         {
             // ReSharper disable once PossibleNullReferenceException
             var worksheet = contentRows.FirstOrDefault().Worksheet;
             var left = worksheet.FirstColumnUsed().ColumnNumber();
             var right = worksheet.LastColumnUsed().ColumnNumber();
 
+            var compareColumnLetters = equalFormulaFormats.Keys.ToList();
+
             foreach (var row in contentRows)
             {
+                var rowNumber = row.RowNumber();
+
+                ApplyFormulaWithCompareColumn(equalFormulaFormats, missingFormulaFormats, similarFormulaFormats, notEqualFormulaFormats,
+                    worksheet, compareColumnLetters, rowNumber);
+            }
+
+            compareColumnLetters.ForEach(columnLetter =>
+            {
+                missingFormulaFormats[columnLetter] = string.Format("${0}{{0}}=\"MISSING\"", columnLetter);
+                equalFormulaFormats[columnLetter] = string.Format("${0}{{0}}=\"EQUAL\"", columnLetter);
+                similarFormulaFormats[columnLetter] = string.Format("${0}{{0}}=\"SIMILAR\"", columnLetter);
+                notEqualFormulaFormats[columnLetter] = string.Format("${0}{{0}}=\"DIFFERENT\"", columnLetter);
+            });
+
+            foreach (var row in contentRows)
+            {
+                var rowNumber = row.RowNumber();
+
+                var equalFormulaFormat = string.Format("AND({0})", string.Join(",", equalFormulaFormats.Values));
+                var missingFormulaFormat = string.Format("AND({0})", string.Join(",", missingFormulaFormats.Values));
+                var notEqualFormulaFormat = string.Format("OR({0})", string.Join(",", notEqualFormulaFormats.Values));
+                var similarFormulaFormat = string.Format("AND(NOT({0}),OR({1}))", notEqualFormulaFormat,
+                    string.Join(",", similarFormulaFormats.Values));
+
                 var range = worksheet.Range(row.RowNumber(), left, row.RowNumber(), right);
 
                 range.AddConditionalFormat().WhenIsTrue(
-                    PrepareFormula(string.Format(equalFormulaFormat, row.RowNumber())))
+                    PrepareFormula(string.Format(equalFormulaFormat, rowNumber)))
                     .Fill.SetBackgroundColor(XLColor.Green);
 
                 range.AddConditionalFormat().WhenIsTrue(
-                    PrepareFormula(string.Format(missingFormulaFormat, row.RowNumber())))
+                    PrepareFormula(string.Format(missingFormulaFormat, rowNumber)))
                     .Fill.SetBackgroundColor(XLColor.Red);
 
                 range.AddConditionalFormat().WhenIsTrue(
-                    PrepareFormula(string.Format(similarFormulaFormat, row.RowNumber())))
+                    PrepareFormula(string.Format(similarFormulaFormat, rowNumber)))
                     .Fill.SetBackgroundColor(XLColor.GreenRyb);
 
                 range.AddConditionalFormat().WhenIsTrue(
-                    PrepareFormula(string.Format(notEqualFormulaFormat, row.RowNumber())))
+                    PrepareFormula(string.Format(notEqualFormulaFormat, rowNumber)))
                     .Fill.SetBackgroundColor(XLColor.Yellow);
+            }
+        }
+
+        private static void ApplyFormulaWithCompareColumn(Dictionary<string, string> equalFormulaFormat, Dictionary<string, string> missingFormulaFormat, Dictionary<string, string> similarFormulaFormat, Dictionary<string, string> notEqualFormulaFormat, IXLWorksheet worksheet, List<string> compareColumnLetters, int rowNumber)
+        {
+            foreach (var compareColumnLetter in compareColumnLetters)
+            {
+                var compareColum = worksheet.Cell(rowNumber, compareColumnLetter);
+                var formulaFormat = string.Format("IF({0},\"MISSING\",IF({1},\"EQUAL\",IF({2},\"SIMILAR\",\"DIFFERENT\")))",
+                    missingFormulaFormat[compareColumnLetter],
+                    equalFormulaFormat[compareColumnLetter],
+                    similarFormulaFormat[compareColumnLetter],
+                    notEqualFormulaFormat[compareColumnLetter]);
+                var formula = PrepareFormula(string.Format(formulaFormat, rowNumber));
+                compareColum.SetFormulaA1(formula);
             }
         }
 
@@ -122,8 +161,10 @@ namespace lastr2d2.Tools.DataDiff.Core
             return formula;
         }
 
-        private static void CreateFormula(KeyValuePair<string, IXLAddress> leftColumn, KeyValuePair<string, IXLAddress> rightColumn, KeyValuePair<string, IXLAddress> gapColumn,
-            List<string> missingFormulaFormats, List<string> similarFormulaFormats, List<string> equalFormulaFormats, List<string> notEqualFormulaFormats)
+        private static void CreateFormula(
+            KeyValuePair<string, IXLAddress> leftColumn, KeyValuePair<string, IXLAddress> rightColumn, KeyValuePair<string, IXLAddress> gapColumn, KeyValuePair<string, IXLAddress> compareColumn,
+            Dictionary<string, string> missingFormulaFormats, Dictionary<string, string> similarFormulaFormats,
+            Dictionary<string, string> equalFormulaFormats, Dictionary<string, string> notEqualFormulaFormats)
         {
             var missingFormulaFormat = string.Format(
                 //OR(ISBLANK($B4),ISBLANK($A4))
@@ -133,7 +174,8 @@ namespace lastr2d2.Tools.DataDiff.Core
                 )",
                 leftColumn.Value.ColumnLetter,
                 rightColumn.Value.ColumnLetter);
-            missingFormulaFormats.Add(missingFormulaFormat);
+
+            missingFormulaFormats.Add(compareColumn.Value.ColumnLetter, missingFormulaFormat);
 
             var similarFormulaFormat = string.Format(
                 //AND(NOT($F2),$C2<>0,$A2<>$B2,ABS($A2-$B2)<$C2)
@@ -181,17 +223,21 @@ namespace lastr2d2.Tools.DataDiff.Core
                 similarFormulaFormat,
                 equalFormulaFormat);
 
-            similarFormulaFormats.Add(similarFormulaFormat);
-            equalFormulaFormats.Add(equalFormulaFormat);
-            notEqualFormulaFormats.Add(notEqualFormulaFormat);
+            similarFormulaFormats.Add(compareColumn.Value.ColumnLetter, similarFormulaFormat);
+            equalFormulaFormats.Add(compareColumn.Value.ColumnLetter, equalFormulaFormat);
+            notEqualFormulaFormats.Add(compareColumn.Value.ColumnLetter, notEqualFormulaFormat);
         }
 
-        private static IEnumerable<string> FindUnderlyingColumns(IEnumerable<string> columns, string leftSuffix, string rightSuffix, string gapSuffix)
+        private static IEnumerable<string> FindUnderlyingColumns(IEnumerable<string> columns, string leftSuffix, string rightSuffix, string gapSuffix, string compareSuffix)
         {
-            var suffixes = new[] { leftSuffix, rightSuffix, gapSuffix };
-            return columns.Select(l => TrimEnd(l, suffixes))
+            var suffixes = new[] { leftSuffix, rightSuffix, gapSuffix, compareSuffix };
+            var names = columns.Select(l => TrimEnd(l, suffixes))
                 .Distinct()
-                .ToList();
+                // filter columns we don't want to compare
+                .Where(name =>
+                    suffixes.All(suffix =>
+                        columns.Contains(string.Format("{0}{1}", name, suffix), StringComparer.OrdinalIgnoreCase)));
+            return names.ToList();
         }
 
         private static string TrimEnd(string source, IEnumerable<string> suffixes)
