@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
+using System.IO;
 using System.Linq;
 using lastr2d2.Tools.DataDiff.Core;
 using lastr2d2.Tools.DataDiff.Core.Model;
@@ -7,19 +9,28 @@ namespace lastr2d2.Tools.DataDiff.Deploy
 {
     public class Deploy
     {
-        private static void Main()
+        private static int Main(string[] args)
         {
-            var task = Task.LoadFromXml("config.xml");
+            var path = (args == null || args.Length < 1) ? "config.xml" : args[0];
+            if (!File.Exists(path))
+            {
+                Console.WriteLine("no config file found");
+                return -1;
+            }
+
+            var task = Task.LoadFromXml(path);
 
             var leftDataTable = PrepareDataTable(task, 0);
             var rightDataTable = PrepareDataTable(task, 1);
             var mergeResult = DataTableMerger.Merge(leftDataTable, rightDataTable,
-                compareColumns: task.Columns.CompareColumns.ToList(),
+                compareColumnNames: task.Columns.CompareColumns.ToList(),
                 gapSettingForNumbericColumn: task.GapMapping);
-            
+
             mergeResult.TableName = "Result";
 
             ExportToExcel(task, leftDataTable, rightDataTable, mergeResult);
+
+            return 0;
         }
 
         private static void ExportToExcel(Task task, DataTable leftDataTable, DataTable rightDataTable, DataTable mergeResult)
