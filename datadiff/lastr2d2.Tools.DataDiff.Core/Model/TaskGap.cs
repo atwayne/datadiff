@@ -17,7 +17,14 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return (ColumnsString ?? string.Empty).Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                if (string.IsNullOrWhiteSpace(ColumnsString))
+                {
+                    return new[] { string.Empty };
+                }
+                else
+                {
+                    return ColumnsString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                }
             }
         }
 
