@@ -9,7 +9,7 @@ namespace lastr2d2.Tools.DataDiff.Core
     public class DataTableMerger
     {
         public static DataTable Merge(DataTable leftTable, DataTable rightTable,
-            List<string> compareColumns = null,
+            List<string> compareColumnNames = null,
             string leftTableAlias = null, string rightTableAlias = null, Dictionary<string, double> gapSettingForNumbericColumn = null)
         {
             var columns = GetAllColumns(leftTable, gapSettingForNumbericColumn);
@@ -29,10 +29,10 @@ namespace lastr2d2.Tools.DataDiff.Core
                 result.Columns.Add(string.Format("{0}_{1}", column.Name, rightTableAlias), columnType);
             });
 
-            if (compareColumns == null || !compareColumns.Any())
-                compareColumns = nonPrimaryColumns.Select(column => column.Name).ToList();
+            if (compareColumnNames == null || !compareColumnNames.Any())
+                compareColumnNames = nonPrimaryColumns.Select(column => column.Name).ToList();
 
-            compareColumns.ForEach(columnName =>
+            compareColumnNames.ForEach(columnName =>
             {
                 var column = columns.FirstOrDefault(c => c.Name.Equals(columnName));
                 if (column != null)
@@ -42,8 +42,8 @@ namespace lastr2d2.Tools.DataDiff.Core
                 }
             });
 
-            Merge(result, leftTable, rightTable, leftTableAlias, rightTableAlias, keyFields, nonPrimaryColumns);
-            Merge(result, rightTable, leftTable, rightTableAlias, leftTableAlias, keyFields, nonPrimaryColumns);
+            Merge(result, leftTable, rightTable, leftTableAlias, rightTableAlias, keyFields, nonPrimaryColumns, compareColumnNames);
+            Merge(result, rightTable, leftTable, rightTableAlias, leftTableAlias, keyFields, nonPrimaryColumns, compareColumnNames);
 
             return result;
         }
@@ -51,7 +51,7 @@ namespace lastr2d2.Tools.DataDiff.Core
         private static void Merge(DataTable result,
             DataTable sourceTable, DataTable referTable,
             string alias, string referAlias,
-            IList<Field> keyFields, List<Field> compareKeys)
+            IList<Field> keyFields, List<Field> nonPrimaryColumns, List<string> compareColumnNames)
         {
             foreach (var row in sourceTable.AsEnumerable())
             {
@@ -73,12 +73,16 @@ namespace lastr2d2.Tools.DataDiff.Core
                     newRow[key.Name] = row[key.Name];
                 }
 
-                foreach (var key in compareKeys)
+                foreach (var key in nonPrimaryColumns)
                 {
                     newRow[string.Format("{0}_{1}", key.Name, alias)] = row[key.Name];
                     newRow[string.Format("{0}_{1}", key.Name, referAlias)] =
                         matchingRow == null ? DBNull.Value : matchingRow[key.Name];
-                    newRow[string.Format("{0}_{1}", key.Name, "Gap")] = key.Gap;
+
+                    if (compareColumnNames.Contains(key.Name, StringComparer.OrdinalIgnoreCase))
+                    {
+                        newRow[string.Format("{0}_{1}", key.Name, "Gap")] = key.Gap;
+                    }
                 }
                 result.Rows.Add(newRow);
                 result.AcceptChanges();
