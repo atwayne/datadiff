@@ -2,10 +2,10 @@
 {
     public enum FieldCompareResult
     {
-        Identical,
-        MissingInLeft,
-        MissingInRight,
-        Similar,
-        QuiteDifferent
+        Identical = 0,
+        Similar = 1,
+        MissingInLeft = 2,
+        MissingInRight = 3,
+        QuiteDifferent = 4
     }
 }

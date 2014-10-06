@@ -89,8 +89,6 @@ namespace lastr2d2.Tools.DataDiff.Core
         {
             // ReSharper disable once PossibleNullReferenceException
             var worksheet = contentRows.FirstOrDefault().Worksheet;
-            var left = worksheet.FirstColumnUsed().ColumnNumber();
-            var right = worksheet.LastColumnUsed().ColumnNumber();
 
             var compareColumnLetters = equalFormulaFormats.Keys.ToList();
 
@@ -110,34 +108,30 @@ namespace lastr2d2.Tools.DataDiff.Core
                 notEqualFormulaFormats[columnLetter] = string.Format("${0}{{0}}=\"DIFFERENT\"", columnLetter);
             });
 
-            foreach (var row in contentRows)
-            {
-                var rowNumber = row.RowNumber();
+            var formattingRange = worksheet.Range(worksheet.FirstCellUsed().Address, worksheet.LastCellUsed().Address);
 
-                var equalFormulaFormat = string.Format("AND({0})", string.Join(",", equalFormulaFormats.Values));
-                var missingFormulaFormat = string.Format("AND({0})", string.Join(",", missingFormulaFormats.Values));
-                var notEqualFormulaFormat = string.Format("OR({0})", string.Join(",", notEqualFormulaFormats.Values));
-                var similarFormulaFormat = string.Format("AND(NOT({0}),OR({1}))", notEqualFormulaFormat,
-                    string.Join(",", similarFormulaFormats.Values));
+            var equalFormulaFormat = string.Format("AND({0})", string.Join(",", equalFormulaFormats.Values));
+            var missingFormulaFormat = string.Format("AND({0})", string.Join(",", missingFormulaFormats.Values));
+            var notEqualFormulaFormat = string.Format("OR({0})", string.Join(",", notEqualFormulaFormats.Values));
+            var similarFormulaFormat = string.Format("AND(NOT({0}),OR({1}))", notEqualFormulaFormat,
+                string.Join(",", similarFormulaFormats.Values));
 
-                var range = worksheet.Range(row.RowNumber(), left, row.RowNumber(), right);
-
-                range.AddConditionalFormat().WhenIsTrue(
-                    PrepareFormula(string.Format(equalFormulaFormat, rowNumber)))
+            var top = worksheet.FirstRowUsed().RowNumber();
+            formattingRange.AddConditionalFormat().WhenIsTrue(
+                    PrepareFormula(string.Format(equalFormulaFormat, top)))
                     .Fill.SetBackgroundColor(XLColor.Green);
 
-                range.AddConditionalFormat().WhenIsTrue(
-                    PrepareFormula(string.Format(missingFormulaFormat, rowNumber)))
-                    .Fill.SetBackgroundColor(XLColor.Red);
+            formattingRange.AddConditionalFormat().WhenIsTrue(
+                PrepareFormula(string.Format(missingFormulaFormat, top)))
+                .Fill.SetBackgroundColor(XLColor.Red);
 
-                range.AddConditionalFormat().WhenIsTrue(
-                    PrepareFormula(string.Format(similarFormulaFormat, rowNumber)))
-                    .Fill.SetBackgroundColor(XLColor.GreenRyb);
+            formattingRange.AddConditionalFormat().WhenIsTrue(
+                PrepareFormula(string.Format(similarFormulaFormat, top)))
+                .Fill.SetBackgroundColor(XLColor.GreenRyb);
 
-                range.AddConditionalFormat().WhenIsTrue(
-                    PrepareFormula(string.Format(notEqualFormulaFormat, rowNumber)))
-                    .Fill.SetBackgroundColor(XLColor.Yellow);
-            }
+            formattingRange.AddConditionalFormat().WhenIsTrue(
+                PrepareFormula(string.Format(notEqualFormulaFormat, top)))
+                .Fill.SetBackgroundColor(XLColor.Yellow);
         }
 
         private static void ApplyFormulaWithCompareColumn(Dictionary<string, string> equalFormulaFormat, Dictionary<string, string> missingFormulaFormat, Dictionary<string, string> similarFormulaFormat, Dictionary<string, string> notEqualFormulaFormat, IXLWorksheet worksheet, List<string> compareColumnLetters, int rowNumber)
