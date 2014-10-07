@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
@@ -8,6 +9,9 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
     [XmlRootAttribute(Namespace = "", IsNullable = false)]
     public class Task
     {
+        [XmlAttribute("name")]
+        public string Name { get; set; }
+
         [XmlArrayItem("Source", IsNullable = false)]
         public TaskSource[] Sources { get; set; }
 
@@ -41,7 +45,16 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
             using (var fileStream = new FileStream(path, FileMode.Open))
             {
                 var innerTask = (Task)serializer.Deserialize(fileStream);
+                SetReportPath(innerTask);
                 return innerTask;
+            }
+        }
+
+        private static void SetReportPath(Task innerTask)
+        {
+            if (Directory.Exists(innerTask.Report.Path))
+            {
+                innerTask.Report.Path = Path.Combine(innerTask.Report.Path, string.Format("{0}_{1}.xlsx", innerTask.Name, DateTime.Now.ToString("yyyyMMddHHmmssfffffff")));
             }
         }
     }

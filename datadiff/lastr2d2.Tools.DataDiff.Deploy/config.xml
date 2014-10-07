@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Task>
+<Task name="aaa">
   <Sources>
     <Source name="PROD">
       <ConnectionString>Server=X230\SQLEXPRESS;Database=Northwind;Trusted_Connection=Yes;</ConnectionString>
@@ -63,5 +63,5 @@
       <Value>0.2</Value>
     </Gap>
   </Gaps>
-  <Report path="D:\report.xlsx"/>
+  <Report path="E:\"/>
 </Task>
