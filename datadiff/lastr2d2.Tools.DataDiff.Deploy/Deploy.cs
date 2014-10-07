@@ -2,22 +2,44 @@
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using lastr2d2.Tools.DataDiff.Core;
-using lastr2d2.Tools.DataDiff.Core.Model;
-
+using Task = lastr2d2.Tools.DataDiff.Core.Model.Task;
 namespace lastr2d2.Tools.DataDiff.Deploy
 {
     public class Deploy
     {
         private static int Main(string[] args)
         {
-            var path = (args == null || args.Length < 1) ? "config.xml" : args[0];
-            if (!File.Exists(path))
+            var path = (args == null || args.Length < 1) ? "/tasks/" : args[0];
+            if (Directory.Exists(path))
             {
-                Console.WriteLine("no config file found");
+                var xmlFiles = Directory.GetFiles(path, "*.xml");
+                Parallel.ForEach(xmlFiles, filePath =>
+                {
+                    try
+                    {
+                        ProcessTask(filePath);
+                    }
+                    catch (Exception exception)
+                    {
+                        Console.WriteLine(exception);
+                    }
+                });
+            }
+            else if (File.Exists(path))
+            {
+                ProcessTask(path);
+            }
+            else {
                 return -1;
             }
 
+            return 0;
+        }
+
+        private static void ProcessTask(string path)
+        {
             var task = Task.LoadFromXml(path);
 
             var leftDataTable = PrepareDataTable(task, 0);
@@ -26,11 +48,9 @@ namespace lastr2d2.Tools.DataDiff.Deploy
                 compareColumnNames: task.Columns.CompareColumns.ToList(),
                 gapSettingForNumbericColumn: task.GapMapping);
 
-            mergeResult.TableName = "Result";
+            mergeResult.TableName = string.IsNullOrWhiteSpace(task.Name) ? "Result" : task.Name;
 
             ExportToExcel(task, leftDataTable, rightDataTable, mergeResult);
-
-            return 0;
         }
 
         private static void ExportToExcel(Task task, DataTable leftDataTable, DataTable rightDataTable, DataTable mergeResult)
