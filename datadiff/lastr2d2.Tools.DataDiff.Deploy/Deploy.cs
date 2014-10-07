@@ -11,10 +11,13 @@ namespace lastr2d2.Tools.DataDiff.Deploy
     {
         private static int Main(string[] args)
         {
-            var path = (args == null || args.Length < 1) ? "/tasks/" : args[0];
+            Config.Load();
+
+            var path = (args == null || args.Length < 1) ? Config.DefaultInputDirectory : args[0];
+
             if (Directory.Exists(path))
             {
-                var xmlFiles = Directory.GetFiles(path, "*.xml");
+                var xmlFiles = Directory.GetFiles(path, Config.DefaultInputFileNamePattern);
                 Parallel.ForEach(xmlFiles, filePath =>
                 {
                     try
@@ -31,7 +34,8 @@ namespace lastr2d2.Tools.DataDiff.Deploy
             {
                 ProcessTask(path);
             }
-            else {
+            else
+            {
                 return -1;
             }
 
