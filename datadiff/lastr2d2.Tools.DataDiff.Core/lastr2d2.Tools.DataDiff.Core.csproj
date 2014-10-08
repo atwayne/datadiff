@@ -64,6 +64,7 @@
     <Compile Include="Model\TaskColumns.cs" />
     <Compile Include="Model\TaskGap.cs" />
     <Compile Include="Model\TaskReport.cs" />
+    <Compile Include="Model\Tasks.cs" />
     <Compile Include="Model\TaskSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQLServerHelper.cs" />

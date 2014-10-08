@@ -39,15 +39,21 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
 
         public TaskReport Report { get; set; }
 
-        public static Task LoadFromXml(string path)
+        public static Tasks LoadFromXml(string path)
         {
-            var serializer = new XmlSerializer(typeof(Task));
-            using (var fileStream = new FileStream(path, FileMode.Open))
+            var tasks = new Tasks();
+            try
             {
-                var innerTask = (Task)serializer.Deserialize(fileStream);
-                SetReportPath(innerTask);
-                return innerTask;
+                tasks = LoadObjectFromXml<Tasks>(path);
             }
+            catch (InvalidOperationException)
+            {
+                var task = LoadObjectFromXml<Task>(path);
+                tasks.Add(task);
+            }
+            tasks.ForEach(SetReportPath);
+
+            return tasks;
         }
 
         private static void SetReportPath(Task innerTask)
@@ -55,6 +61,16 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
             if (Directory.Exists(innerTask.Report.Path))
             {
                 innerTask.Report.Path = Path.Combine(innerTask.Report.Path, string.Format("{0}_{1}.xlsx", innerTask.Name, DateTime.Now.ToString("yyyyMMddHHmmssfffffff")));
+            }
+        }
+
+        private static T LoadObjectFromXml<T>(string path)
+        {
+            var serializer = new XmlSerializer(typeof(T));
+            using (var fileStream = new FileStream(path, FileMode.Open))
+            {
+                var result = (T)serializer.Deserialize(fileStream);
+                return result;
             }
         }
     }

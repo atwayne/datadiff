@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using lastr2d2.Tools.DataDiff.Core.Model;
 
 namespace lastr2d2.Tools.DataDiff.Deploy

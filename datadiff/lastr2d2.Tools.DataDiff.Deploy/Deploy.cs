@@ -12,12 +12,12 @@ namespace lastr2d2.Tools.DataDiff.Deploy
         private static int Main(string[] args)
         {
             Config.Load();
+            var pathOfInput = (args == null || args.Length < 1) ? Config.DefaultInputDirectory : args[0];
 
-            var path = (args == null || args.Length < 1) ? Config.DefaultInputDirectory : args[0];
-
-            if (Directory.Exists(path))
+            if (Directory.Exists(pathOfInput))
             {
-                var xmlFiles = Directory.GetFiles(path, Config.DefaultInputFileNamePattern);
+                var xmlFiles = Directory.GetFiles(pathOfInput, Config.DefaultInputFileNamePattern);
+
                 Parallel.ForEach(xmlFiles, filePath =>
                 {
                     try
@@ -30,9 +30,9 @@ namespace lastr2d2.Tools.DataDiff.Deploy
                     }
                 });
             }
-            else if (File.Exists(path))
+            else if (File.Exists(pathOfInput))
             {
-                ProcessTask(path);
+                ProcessTask(pathOfInput);
             }
             else
             {
@@ -44,9 +44,16 @@ namespace lastr2d2.Tools.DataDiff.Deploy
 
         private static void ProcessTask(string path)
         {
-            var task = Task.LoadFromXml(path);
-            task.LoadConfig();
+            var tasks = Task.LoadFromXml(path);
+            Parallel.ForEach(tasks, new ParallelOptions() { MaxDegreeOfParallelism = 5 }, task =>
+            {
+                task.LoadConfig();
+                ProcessTask(task);
+            });
+        }
 
+        private static void ProcessTask(Task task)
+        {
             var leftDataTable = PrepareDataTable(task, 0);
             var rightDataTable = PrepareDataTable(task, 1);
             var mergeResult = DataTableMerger.Merge(leftDataTable, rightDataTable,
@@ -61,14 +68,16 @@ namespace lastr2d2.Tools.DataDiff.Deploy
         private static void ExportToExcel(Task task, DataTable leftDataTable, DataTable rightDataTable, DataTable mergeResult)
         {
             var execelGenerator = new ExcelGenerator();
-            var workbook = execelGenerator.Export(mergeResult, path: task.Report.Path);
+            lock (Config.DefaultOutputFileLock)
+            {
+                var workbook = execelGenerator.Export(mergeResult, path: task.Report.Path);
+                var worksheet = workbook.Worksheet(mergeResult.TableName);
+                execelGenerator.Highlight(worksheet,
+                    "_" + leftDataTable.TableName,
+                    "_" + rightDataTable.TableName);
 
-            var worksheet = workbook.Worksheet(mergeResult.TableName);
-            execelGenerator.Highlight(worksheet,
-                "_" + leftDataTable.TableName,
-                "_" + rightDataTable.TableName);
-
-            workbook.SaveAs(task.Report.Path);
+                workbook.SaveAs(task.Report.Path);
+            }
         }
 
         private static DataTable PrepareDataTable(Task task, int sourceIndex)

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace lastr2d2.Tools.DataDiff.Deploy
@@ -10,6 +9,8 @@ namespace lastr2d2.Tools.DataDiff.Deploy
         public static string DefaultInputDirectory { get; set; }
         public static string DefaultOutputFile { get; set; }
         public static string DefaultInputFileNamePattern { get; set; }
+        public static object DefaultOutputFileLock { get; private set; }
+
         public static IDictionary<string, string> QueryParameters { get; set; }
 
         public static void Load()
@@ -20,6 +21,8 @@ namespace lastr2d2.Tools.DataDiff.Deploy
 
             QueryParameters = new Dictionary<string, string>();
             ReadQueryParameters();
+
+            DefaultOutputFileLock = new object();
         }
 
         private static void ReadQueryParameters()

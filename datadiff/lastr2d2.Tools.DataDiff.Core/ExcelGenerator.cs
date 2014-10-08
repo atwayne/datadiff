@@ -15,9 +15,10 @@ namespace lastr2d2.Tools.DataDiff.Core
             Contract.Requires(dataTable != null);
             Contract.Requires(!string.IsNullOrWhiteSpace(dataTable.TableName) || !string.IsNullOrWhiteSpace(sheetName));
             sheetName = sheetName ?? dataTable.TableName;
-            XLWorkbook workbook = string.IsNullOrEmpty(path) || !File.Exists(path) ?
-                new XLWorkbook() : new XLWorkbook(path);
+            XLWorkbook workbook;
 
+            workbook = string.IsNullOrEmpty(path) || !File.Exists(path) ?
+                    new XLWorkbook() : new XLWorkbook(path);
 
             if (string.IsNullOrEmpty(sheetName))
             {
