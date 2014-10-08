@@ -14,7 +14,7 @@ namespace lastr2d2.Tools.DataDiff.Deploy
 
         private static void LoadReportPath(Task task)
         {
-            if (!string.IsNullOrEmpty(Config.DefaultOutputFile) && File.Exists(Config.DefaultOutputFile)
+            if (!string.IsNullOrEmpty(Config.DefaultOutputFile)
                 && string.IsNullOrEmpty(task.Report.Path))
             {
                 task.Report.Path = Config.DefaultOutputFile;
