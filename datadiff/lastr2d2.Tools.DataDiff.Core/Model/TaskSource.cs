@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace lastr2d2.Tools.DataDiff.Core.Model
 {
@@ -11,5 +12,8 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
 
         [XmlAttribute("name")]
         public string Name { get; set; }
+
+        [XmlIgnore]
+        public IDictionary<string, string> QueryParameters { get; set; }
     }
 }

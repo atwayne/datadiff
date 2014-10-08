@@ -45,6 +45,7 @@ namespace lastr2d2.Tools.DataDiff.Deploy
         private static void ProcessTask(string path)
         {
             var task = Task.LoadFromXml(path);
+            task.LoadConfig();
 
             var leftDataTable = PrepareDataTable(task, 0);
             var rightDataTable = PrepareDataTable(task, 1);
@@ -66,6 +67,7 @@ namespace lastr2d2.Tools.DataDiff.Deploy
             execelGenerator.Highlight(worksheet,
                 "_" + leftDataTable.TableName,
                 "_" + rightDataTable.TableName);
+
             workbook.SaveAs(task.Report.Path);
         }
 
@@ -73,9 +75,8 @@ namespace lastr2d2.Tools.DataDiff.Deploy
         {
             var source = task.Sources[sourceIndex];
             var sqlServer = new SqlServerHelper(source.ConnectionString);
-            var dataTable = sqlServer.GetDataTable(source.QueryString);
+            var dataTable = sqlServer.GetDataTable(source.QueryString, source.QueryParameters);
             dataTable.TableName = source.Name;
-
             dataTable.PrimaryKey = task.Columns.PrimaryColumns.Select(column => dataTable.Columns[column]).ToArray();
             return dataTable;
         }
