@@ -76,7 +76,17 @@ namespace lastr2d2.Tools.DataDiff.Deploy
                     "_" + leftDataTable.TableName,
                     "_" + rightDataTable.TableName);
 
+                OrderWorksheets(workbook);
                 workbook.SaveAs(task.Report.Path);
+            }
+        }
+
+        private static void OrderWorksheets(ClosedXML.Excel.XLWorkbook workbook)
+        {
+            var worksheets = workbook.Worksheets.OrderBy(sheet => sheet.Name, StringComparer.OrdinalIgnoreCase).ToArray();
+            for (int index = 0; index < worksheets.Length; index++)
+            {
+                workbook.Worksheet(worksheets[index].Name).Position = index + 1;
             }
         }
 
