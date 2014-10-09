@@ -1,67 +1,61 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Task name="aaa">
-  <Sources>
-    <Source name="PROD">
-      <ConnectionString>Server=X230\SQLEXPRESS;Database=Northwind;Trusted_Connection=Yes;</ConnectionString>
-      <QueryString>
-        SELECT [ProductID]
-        ,[ProductName]
-        ,[SupplierID]
-        ,[CategoryID]
-        ,[QuantityPerUnit]
-        ,[UnitPrice]
-        ,[UnitsInStock]
-        ,[UnitsOnOrder]
-        ,[ReorderLevel]
-        ,[Discontinued]
-        FROM [Northwind].[dbo].[Products]
-      </QueryString>
-    </Source>
-    <Source name="QA">
-      <ConnectionString>Server=X230\SQLEXPRESS;Database=Northwind;Trusted_Connection=Yes;</ConnectionString>
-      <QueryString>
-        SELECT [ProductID]
-        ,[ProductName]
-        ,[SupplierID]
-        ,[CategoryID]
-        ,[QuantityPerUnit]
-        ,[UnitPrice]
-        ,[UnitsInStock]
-        ,[UnitsOnOrder]
-        ,[ReorderLevel]
-        ,[Discontinued]
-        FROM [Northwind].[dbo].[Products_BAK]
-      </QueryString>
-    </Source>
-  </Sources>
-  <Columns>
-    <!-- 
-      Put primary columns here, join two or more columns by ","
-      e.g.
-        <PrimaryColumns>Id</PrimaryColumns>
-        <PrimaryColumns>FirstName,LastName</PrimaryColumns>        
+<Tasks>
+  <!-- you can have more than one Task elements.
+      TaskName is used to 
+      1.  generate output file name if you did specify one in the Report element
+      2.  generate worksheet name in excel, so make sure the it's shorter than 32 characters because excel have its limit of length of sheet name
+          also, if you are export all task into one report file, make sure you are using unique TaskNames
     -->
-    <PrimaryColumns>ProductID,ProductName</PrimaryColumns>
-    <!--
-      Put columns you want to compare here, join two or more columns by ","
-      Let it empty here if you want to compare all columns
+  <Task name="TaskName">
+    <Sources>
+      <!-- you can have only two sources now, if you want to compare more than two sources, create another task.
+      name of Source is used to generate column name in excel. so make sure source names are unique
+      -->
+      <Source name="PROD">
+        <!-- sql server connection string -->
+        <ConnectionString></ConnectionString>
+        <!-- query string
+          you can use parameters, value of parameter could be set in app.config
+        -->
+        <QueryString>
+        </QueryString>
+      </Source>
+      <Source name="QA">
+        <ConnectionString></ConnectionString>
+        <QueryString>
+        </QueryString>
+      </Source>
+    </Sources>
+    <Columns>
+      <!-- these columns will be the primary columns, use comma to sperate more than one columns-->
+      <PrimaryColumns></PrimaryColumns>
+      <!-- Optional. if you leave this element empty, the program will compare all non-primary columns.
+      Otherwise the program will only compare the columns specified here.use comma to sperate more than one columns.
+      -->
+      <CompareColumns></CompareColumns>
+    </Columns>
+    <!-- Gap is for numberic columns such as float,double,decimal etc.
+      We decide one number is similar with another by using this formula:
+      (Gap IS NOT NULL) && FirstNumber<>0 && (ABS(FirstNumber-SecondNumber)/ABS(FirstNumber) < Gap)
       
-      e.g.
-        <CompareColumns></CompareColumns>
-        <CompareColumns>DV01</CompareColumns>
-        <CompareColumns>DV01,Dollor_DV01</CompareColumns>
+      You can either set a global gap or set sperated gaps for columns
     -->
-    <CompareColumns></CompareColumns>
-  </Columns>
-  <Gaps>
-    <Gap>
-      <Columns>UnitPrice</Columns>
-      <Value>0.1</Value>
-    </Gap>
-    <Gap>
-      <Columns>UnitsInStock</Columns>
-      <Value>0.2</Value>
-    </Gap>
-  </Gaps>
-  <Report path="E:\"/>
-</Task>
+    <Gaps>
+      <Gap>
+        <!-- Optional, leave Columns empty to make this a global gap.
+        use comma to sperate more than one columns
+        -->
+        <Columns></Columns>
+        <!-- Gap value should between 0-1, 0.1 means 10%, 1 means 100%-->
+        <Value>0.1</Value>
+      </Gap>
+    </Gaps>
+    <!-- 
+      the path could be either a directory or a file or empty,
+      if it's a file, the program will append a new worksheet to that.
+      if it's a directory, the program will create a new file based on the TaskName.
+      if you leave this empty, the program will read DefaultInputDirectory from app.config
+    -->
+    <Report path=""/>
+  </Task>
+</Tasks>

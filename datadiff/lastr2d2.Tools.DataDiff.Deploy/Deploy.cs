@@ -12,7 +12,7 @@ namespace lastr2d2.Tools.DataDiff.Deploy
         private static int Main(string[] args)
         {
             Config.Load();
-            var pathOfInput = (args == null || args.Length < 1) ? Config.DefaultInputDirectory : args[0];
+            var pathOfInput = (args == null || args.Length < 1) ? Config.DefaultInputPath : args[0];
 
             if (Directory.Exists(pathOfInput))
             {
