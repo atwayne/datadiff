@@ -27,23 +27,23 @@
       </Source>
     </Sources>
     <Columns>
-      <!-- these columns will be the primary columns, use comma to sperate more than one columns-->
+      <!-- these columns will be the primary columns, use comma to separate more than one columns-->
       <PrimaryColumns></PrimaryColumns>
       <!-- Optional. if you leave this element empty, the program will compare all non-primary columns.
-      Otherwise the program will only compare the columns specified here.use comma to sperate more than one columns.
+      Otherwise the program will only compare the columns specified here.use comma to separate more than one columns.
       -->
       <CompareColumns></CompareColumns>
     </Columns>
-    <!-- Gap is for numberic columns such as float,double,decimal etc.
+    <!-- Gap is for numeric columns such as float,double,decimal etc.
       We decide one number is similar with another by using this formula:
       (Gap IS NOT NULL) && FirstNumber<>0 && (ABS(FirstNumber-SecondNumber)/ABS(FirstNumber) < Gap)
       
-      You can either set a global gap or set sperated gaps for columns
+      You can either set a global gap or set separated gaps for columns
     -->
     <Gaps>
       <Gap>
         <!-- Optional, leave Columns empty to make this a global gap.
-        use comma to sperate more than one columns
+        use comma to separate more than one columns
         -->
         <Columns></Columns>
         <!-- Gap value should between 0-1, 0.1 means 10%, 1 means 100%-->
