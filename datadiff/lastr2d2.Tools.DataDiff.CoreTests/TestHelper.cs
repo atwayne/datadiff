@@ -17,7 +17,6 @@ namespace lastr2d2.Tools.DataDiff.CoreTests
 
             if (!withData) return table;
 
-
             table.Rows.Add(42, "Shanghai", DateTime.Now, 42 / 10, Guid.NewGuid());
             table.Rows.Add(36, "New York", DateTime.Now, 36 / 10, Guid.NewGuid());
             table.Rows.Add(69, null, DateTime.Now, 69 / 10, Guid.NewGuid());
@@ -65,8 +64,6 @@ namespace lastr2d2.Tools.DataDiff.CoreTests
             table.Rows[4]["LastUpdated_PROD"] = DBNull.Value;
 
             return table;
-
         }
-
     }
 }

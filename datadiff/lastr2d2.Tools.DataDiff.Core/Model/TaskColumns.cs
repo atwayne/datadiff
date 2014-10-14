@@ -11,7 +11,7 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return PrimaryColumnsString.Split(new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                return PrimaryColumnsString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             }
         }
 
@@ -20,7 +20,7 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return CompareColumnsString.Split(new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                return CompareColumnsString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             }
         }
 

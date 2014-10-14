@@ -118,6 +118,5 @@ namespace lastr2d2.Tools.DataDiff.Core
 
             return fields;
         }
-
     }
 }

@@ -7,9 +7,11 @@ namespace lastr2d2.Tools.DataDiff.Deploy
     internal static class Config
     {
         public static string DefaultInputPath { get; set; }
+
         public static string DefaultInputFileNamePattern { get; set; }
 
         public static string DefaultOutputFile { get; set; }
+
         public static object DefaultOutputFileLock { get; private set; }
 
         public static IDictionary<string, string> QueryParameters { get; set; }

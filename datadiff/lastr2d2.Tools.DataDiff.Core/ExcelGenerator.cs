@@ -1,9 +1,9 @@
-﻿using ClosedXML.Excel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
+using ClosedXML.Excel;
 using DataTable = System.Data.DataTable;
 
 namespace lastr2d2.Tools.DataDiff.Core
@@ -81,7 +81,6 @@ namespace lastr2d2.Tools.DataDiff.Core
 
             ApplyFormula(contentRows, compareColumnSuffix,
                 cellValueEqualFormulaFormats, cellValueMissingFormulaFormats, cellValueSimilarFormulaFormats, cellValueNotEqualFormulaFormats);
-
         }
 
         private static void ApplyFormula(IList<IXLRow> contentRows, string compareSuffix,
@@ -118,14 +117,14 @@ namespace lastr2d2.Tools.DataDiff.Core
                 , string.Join(",", cellValueEqualFormulaFormats.Values)); // all cells equals to its pair
 
             var missingFormulaFormat = string.Format("AND({0})"
-                , string.Join(",", cellValueMissingFormulaFormats.Values)); // all cells are missing 
+                , string.Join(",", cellValueMissingFormulaFormats.Values)); // all cells are missing
 
             // all equal or similar (at least one similar)
             var similarFormulaFormat = string.Format("AND(AND({0}), OR({1}))"
                 , string.Join(",", rowValueSimilarFormulaList) // all cells are either equal or similar to its pair
                 , string.Join(",", cellValueSimilarFormulaFormats.Values)); // at least one cell is similar to its pair
 
-            // not equal means 
+            // not equal means
             var notEqualFormulaFormat = string.Format("OR({0})", string.Join(",", cellValueNotEqualFormulaFormats.Values));
             notEqualFormulaFormat = string.Format("OR({0},{1})" // either
                 , string.Join(",", cellValueNotEqualFormulaFormats.Values) // any cell is different with its pair or

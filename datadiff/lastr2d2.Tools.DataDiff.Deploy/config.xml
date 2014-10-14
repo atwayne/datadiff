@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Tasks>
   <!-- you can have more than one Task elements.
-      TaskName is used to 
+      TaskName is used to
       1.  generate output file name if you did specify one in the Report element
       2.  generate worksheet name in excel, so make sure the it's shorter than 32 characters because excel have its limit of length of sheet name
           also, if you are export all task into one report file, make sure you are using unique TaskNames
@@ -37,7 +37,7 @@
     <!-- Gap is for numeric columns such as float,double,decimal etc.
       We decide one number is similar with another by using this formula:
       (Gap IS NOT NULL) && FirstNumber<>0 && (ABS(FirstNumber-SecondNumber)/ABS(FirstNumber) < Gap)
-      
+
       You can either set a global gap or set separated gaps for columns
     -->
     <Gaps>
@@ -50,12 +50,12 @@
         <Value>0.1</Value>
       </Gap>
     </Gaps>
-    <!-- 
+    <!--
       the path could be either a directory or a file or empty,
       if it's a file, the program will append a new worksheet to that.
       if it's a directory, the program will create a new file based on the TaskName.
       if you leave this empty, the program will read DefaultInputDirectory from app.config
     -->
-    <Report path=""/>
+    <Report path="" />
   </Task>
 </Tasks>

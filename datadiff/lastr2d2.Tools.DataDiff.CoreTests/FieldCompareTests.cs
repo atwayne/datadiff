@@ -33,7 +33,6 @@ namespace lastr2d2.Tools.DataDiff.CoreTests
             Assert.AreEqual(expected, actual);
         }
 
-
         [TestMethod]
         public void CompareTest_DateTime_QuiteDifferent()
         {
@@ -110,7 +109,6 @@ namespace lastr2d2.Tools.DataDiff.CoreTests
             Assert.AreEqual(expected, actual);
         }
 
-
         [TestMethod]
         public void CompareTest_Double_QuiteDifferent()
         {
@@ -136,6 +134,5 @@ namespace lastr2d2.Tools.DataDiff.CoreTests
 
             Assert.AreEqual(expected, actual);
         }
-
     }
 }

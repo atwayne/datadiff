@@ -4,8 +4,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace lastr2d2.Tools.DataDiff.CoreTests
 {
-
-
     /// <summary>
     ///This is a test class for SQLServerHelperTest and is intended
     ///to contain all SQLServerHelperTest Unit Tests

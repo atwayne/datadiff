@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using lastr2d2.Tools.DataDiff.Core;
 using Task = lastr2d2.Tools.DataDiff.Core.Model.Task;
+
 namespace lastr2d2.Tools.DataDiff.Deploy
 {
     public class Deploy
