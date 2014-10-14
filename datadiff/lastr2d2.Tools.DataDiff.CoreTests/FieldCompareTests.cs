@@ -1,15 +1,15 @@
 ﻿using System;
-using lastr2d2.Tools.DataDiff.Core;
-using lastr2d2.Tools.DataDiff.Core.Model;
+using LastR2D2.Tools.DataDiff.Core;
+using LastR2D2.Tools.DataDiff.Core.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace lastr2d2.Tools.DataDiff.CoreTests
+namespace LastR2D2.Tools.DataDiff.CoreTests
 {
     [TestClass]
     public class FieldCompareTests
     {
         [TestMethod]
-        public void CompareTest_DateTime_Identical()
+        public void CompareIdenticalDateTimeThenSuccess()
         {
             var leftDateTime = DateTime.Now;
             var rightDateTime = leftDateTime;
@@ -24,7 +24,7 @@ namespace lastr2d2.Tools.DataDiff.CoreTests
             {
                 Name = "datetime",
                 IsKey = false,
-                Type = typeof(DateTime)
+                FieldType = typeof(DateTime)
             };
 
             var expected = FieldCompareResult.Identical;
@@ -49,7 +49,7 @@ namespace lastr2d2.Tools.DataDiff.CoreTests
             {
                 Name = "datetime",
                 IsKey = false,
-                Type = typeof(DateTime)
+                FieldType = typeof(DateTime)
             };
 
             var expected = FieldCompareResult.QuiteDifferent;
@@ -74,7 +74,7 @@ namespace lastr2d2.Tools.DataDiff.CoreTests
             {
                 Name = "double",
                 IsKey = false,
-                Type = typeof(double)
+                FieldType = typeof(double)
             };
 
             var expected = FieldCompareResult.Identical;
@@ -99,7 +99,7 @@ namespace lastr2d2.Tools.DataDiff.CoreTests
             {
                 Name = "double",
                 IsKey = false,
-                Type = typeof(double),
+                FieldType = typeof(double),
                 Gap = 0.02
             };
 
@@ -125,7 +125,7 @@ namespace lastr2d2.Tools.DataDiff.CoreTests
             {
                 Name = "double",
                 IsKey = false,
-                Type = typeof(double),
+                FieldType = typeof(double),
                 Gap = 0.02
             };
 

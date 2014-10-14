@@ -1,0 +1,12 @@
+﻿<Dictionary>
+  <Words>
+    <Recognized>
+      <Word>R2D2</Word>
+    </Recognized>
+  </Words>
+  <Acronyms>
+    <CasingExceptions>
+      <Acronym>R2D2</Acronym>
+    </CasingExceptions>
+  </Acronyms>
+</Dictionary>

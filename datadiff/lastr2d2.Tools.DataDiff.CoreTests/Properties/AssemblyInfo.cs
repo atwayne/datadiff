@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("lastr2d2.Tools.DataDiff.CoreTests")]
+[assembly: AssemblyTitle("LastR2D2.Tools.DataDiff.CoreTests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("lastr2d2.Tools.DataDiff.CoreTests")]
+[assembly: AssemblyCompany("Wayne")]
+[assembly: AssemblyProduct("LastR2D2.Tools.DataDiff.CoreTests")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

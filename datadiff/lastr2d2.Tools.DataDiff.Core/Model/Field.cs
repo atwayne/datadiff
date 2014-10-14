@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace lastr2d2.Tools.DataDiff.Core.Model
+namespace LastR2D2.Tools.DataDiff.Core.Model
 {
     public class Field
     {
-        public Type Type { get; set; }
+        public Type FieldType { get; set; }
 
         public bool IsKey { get; set; }
 
@@ -29,8 +29,8 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             get
             {
-                return NumericTypes.Contains(Type) ||
-                       NumericTypes.Contains(Nullable.GetUnderlyingType(Type));
+                return NumericTypes.Contains(FieldType) ||
+                       NumericTypes.Contains(Nullable.GetUnderlyingType(FieldType));
             }
         }
     }

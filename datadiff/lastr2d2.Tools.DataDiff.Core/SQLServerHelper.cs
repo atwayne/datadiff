@@ -2,8 +2,9 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics.Contracts;
+using System.Globalization;
 
-namespace lastr2d2.Tools.DataDiff.Core
+namespace LastR2D2.Tools.DataDiff.Core
 {
     public class SqlServerHelper : IDataHelper
     {
@@ -15,10 +16,11 @@ namespace lastr2d2.Tools.DataDiff.Core
             this.connectionString = connectionString;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public DataTable GetDataTable(string query, IDictionary<string, string> parameters = null)
         {
             Contract.Requires(!string.IsNullOrEmpty(query));
-            var dataTable = new DataTable();
+            var dataTable = new DataTable() { Locale = CultureInfo.CurrentCulture };
             using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();

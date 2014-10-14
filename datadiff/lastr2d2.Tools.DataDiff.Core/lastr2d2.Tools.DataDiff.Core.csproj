@@ -7,8 +7,8 @@
     <ProjectGuid>{B2F2641B-B6F0-4945-B421-260C3081F178}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>lastr2d2.Tools.DataDiff.Core</RootNamespace>
-    <AssemblyName>lastr2d2.Tools.DataDiff.Core</AssemblyName>
+    <RootNamespace>LastR2D2.Tools.DataDiff.Core</RootNamespace>
+    <AssemblyName>LastR2D2.Tools.DataDiff.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -53,10 +54,8 @@
     <Compile Include="DataTableMerger.cs" />
     <Compile Include="ExcelGenerator.cs" />
     <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="FieldComparer.cs" />
-    <Compile Include="FieldCompareResult.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IDataHelper.cs" />
-    <Compile Include="IReportGenerator.cs" />
     <Compile Include="Model\Field.cs" />
     <Compile Include="Model\Task.cs">
       <SubType>Code</SubType>
@@ -73,7 +72,9 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="CustomDictionary.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

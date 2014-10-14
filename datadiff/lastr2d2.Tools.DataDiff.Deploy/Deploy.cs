@@ -3,12 +3,12 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using lastr2d2.Tools.DataDiff.Core;
-using Task = lastr2d2.Tools.DataDiff.Core.Model.Task;
+using LastR2D2.Tools.DataDiff.Core;
+using Task = LastR2D2.Tools.DataDiff.Core.Model.Task;
 
-namespace lastr2d2.Tools.DataDiff.Deploy
+namespace LastR2D2.Tools.DataDiff.Deploy
 {
-    public class Deploy
+    public static class Deploy
     {
         private static int Main(string[] args)
         {
@@ -59,7 +59,7 @@ namespace lastr2d2.Tools.DataDiff.Deploy
             var rightDataTable = PrepareDataTable(task, 1);
             var mergeResult = DataTableMerger.Merge(leftDataTable, rightDataTable,
                 compareColumnNames: task.Columns.CompareColumns.ToList(),
-                gapSettingForNumbericColumn: task.GapMapping);
+                gapSettingForNumericColumn: task.GapMapping);
 
             mergeResult.TableName = string.IsNullOrWhiteSpace(task.Name) ? "Result" : task.Name;
 
@@ -68,17 +68,18 @@ namespace lastr2d2.Tools.DataDiff.Deploy
 
         private static void ExportToExcel(Task task, DataTable leftDataTable, DataTable rightDataTable, DataTable mergeResult)
         {
-            var execelGenerator = new ExcelGenerator();
             lock (Config.DefaultOutputFileLock)
             {
-                var workbook = execelGenerator.Export(mergeResult, path: task.Report.Path);
-                var worksheet = workbook.Worksheet(mergeResult.TableName);
-                execelGenerator.Highlight(worksheet,
-                    "_" + leftDataTable.TableName,
-                    "_" + rightDataTable.TableName);
+                using (var workbook = ExcelGenerator.Export(mergeResult, path: task.Report.Path))
+                {
+                    var worksheet = workbook.Worksheet(mergeResult.TableName);
+                    ExcelGenerator.Highlight(worksheet,
+                        "_" + leftDataTable.TableName,
+                        "_" + rightDataTable.TableName);
 
-                OrderWorksheets(workbook);
-                workbook.SaveAs(task.Report.Path);
+                    OrderWorksheets(workbook);
+                    workbook.SaveAs(task.Report.Path);
+                }
             }
         }
 

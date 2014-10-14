@@ -1,46 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
-using lastr2d2.Tools.DataDiff.Core.Model;
+using LastR2D2.Tools.DataDiff.Core.Model;
 
-namespace lastr2d2.Tools.DataDiff.Core
+namespace LastR2D2.Tools.DataDiff.Core
 {
-    public class DataTableMerger
+    public static class DataTableMerger
     {
         public static DataTable Merge(DataTable leftTable, DataTable rightTable,
-            List<string> compareColumnNames = null,
-            string leftTableAlias = null, string rightTableAlias = null, Dictionary<string, double> gapSettingForNumbericColumn = null)
+            ICollection<string> compareColumnNames = null,
+            string leftTableAlias = null, string rightTableAlias = null, IDictionary<string, double> gapSettingForNumericColumn = null)
         {
-            var columns = GetAllColumns(leftTable, gapSettingForNumbericColumn);
+            if (leftTable == null)
+                throw new ArgumentNullException("leftTable");
+            if (rightTable == null)
+                throw new ArgumentNullException("rightTable");
+
+            var columns = GetAllColumns(leftTable, gapSettingForNumericColumn);
+            var nonPrimaryColumns = columns.Where(field => !field.IsKey).ToList();
+
+            if (compareColumnNames == null || !compareColumnNames.Any())
+                compareColumnNames = nonPrimaryColumns.Select(column => column.Name).ToList();
 
             leftTableAlias = leftTableAlias ?? leftTable.TableName;
             rightTableAlias = rightTableAlias ?? rightTable.TableName;
 
             var keyFields = columns.Where(field => field.IsKey).ToList();
 
-            var result = rightTable.Clone();
-            var nonPrimaryColumns = columns.Where(field => !field.IsKey).ToList();
-            nonPrimaryColumns.ForEach(column =>
-            {
-                var columnType = result.Columns[column.Name].DataType;
-                result.Columns.Remove(column.Name);
-                result.Columns.Add(string.Format("{0}_{1}", column.Name, leftTableAlias), columnType);
-                result.Columns.Add(string.Format("{0}_{1}", column.Name, rightTableAlias), columnType);
-            });
-
-            if (compareColumnNames == null || !compareColumnNames.Any())
-                compareColumnNames = nonPrimaryColumns.Select(column => column.Name).ToList();
-
-            compareColumnNames.ForEach(columnName =>
-            {
-                var column = columns.FirstOrDefault(c => c.Name.Equals(columnName));
-                if (column != null)
-                {
-                    result.Columns.Add(string.Format("{0}_{1}", column.Name, "Gap"), typeof(double));
-                    result.Columns.Add(string.Format("{0}_{1}", column.Name, "Compare"), typeof(double));
-                }
-            });
+            var result = BuildDataTable(rightTable, compareColumnNames, leftTableAlias, rightTableAlias, columns, nonPrimaryColumns);
 
             Merge(result, leftTable, rightTable, leftTableAlias, rightTableAlias, keyFields, nonPrimaryColumns, compareColumnNames);
             Merge(result, rightTable, leftTable, rightTableAlias, leftTableAlias, keyFields, nonPrimaryColumns, compareColumnNames);
@@ -48,10 +37,37 @@ namespace lastr2d2.Tools.DataDiff.Core
             return result;
         }
 
+        private static DataTable BuildDataTable(DataTable rightTable,
+            ICollection<string> compareColumnNames, string leftTableAlias, string rightTableAlias,
+            ICollection<Field> columns, ICollection<Field> nonPrimaryColumns)
+        {
+            var result = rightTable.Clone();
+
+            foreach (var column in nonPrimaryColumns)
+            {
+                var columnType = result.Columns[column.Name].DataType;
+                result.Columns.Remove(column.Name);
+                result.Columns.Add(string.Format(CultureInfo.InvariantCulture, "{0}_{1}", column.Name, leftTableAlias), columnType);
+                result.Columns.Add(string.Format(CultureInfo.InvariantCulture, "{0}_{1}", column.Name, rightTableAlias), columnType);
+
+            }
+
+            foreach (var columnName in compareColumnNames)
+            {
+                var column = columns.FirstOrDefault(c => c.Name.Equals(columnName));
+                if (column != null)
+                {
+                    result.Columns.Add(string.Format(CultureInfo.InvariantCulture, "{0}_{1}", column.Name, "Gap"), typeof(double));
+                    result.Columns.Add(string.Format(CultureInfo.InvariantCulture, "{0}_{1}", column.Name, "Compare"), typeof(double));
+                }
+            }
+            return result;
+        }
+
         private static void Merge(DataTable result,
             DataTable sourceTable, DataTable referTable,
             string alias, string referAlias,
-            IList<Field> keyFields, List<Field> nonPrimaryColumns, List<string> compareColumnNames)
+            ICollection<Field> keyFields, ICollection<Field> nonPrimaryColumns, ICollection<string> compareColumnNames)
         {
             foreach (var row in sourceTable.AsEnumerable())
             {
@@ -75,13 +91,13 @@ namespace lastr2d2.Tools.DataDiff.Core
 
                 foreach (var key in nonPrimaryColumns)
                 {
-                    newRow[string.Format("{0}_{1}", key.Name, alias)] = row[key.Name];
-                    newRow[string.Format("{0}_{1}", key.Name, referAlias)] =
+                    newRow[string.Format(CultureInfo.InvariantCulture, "{0}_{1}", key.Name, alias)] = row[key.Name];
+                    newRow[string.Format(CultureInfo.InvariantCulture, "{0}_{1}", key.Name, referAlias)] =
                         matchingRow == null ? DBNull.Value : matchingRow[key.Name];
 
                     if (compareColumnNames.Contains(key.Name, StringComparer.OrdinalIgnoreCase))
                     {
-                        newRow[string.Format("{0}_{1}", key.Name, "Gap")] = key.Gap;
+                        newRow[string.Format(CultureInfo.InvariantCulture, "{0}_{1}", key.Name, "Gap")] = key.Gap;
                     }
                 }
                 result.Rows.Add(newRow);
@@ -89,7 +105,7 @@ namespace lastr2d2.Tools.DataDiff.Core
             }
         }
 
-        private static List<Field> GetAllColumns(DataTable sourceTable, Dictionary<string, double> gapList = null)
+        private static List<Field> GetAllColumns(DataTable sourceTable, IDictionary<string, double> gapList = null)
         {
             var fields = new List<Field>();
             for (int i = 0; i < sourceTable.Columns.Count; i++)
@@ -99,7 +115,7 @@ namespace lastr2d2.Tools.DataDiff.Core
                 fields.Add(new Field
                 {
                     Name = column.ColumnName,
-                    Type = column.DataType,
+                    FieldType = column.DataType,
                     IsKey = sourceTable.PrimaryKey.Contains(column)
                 });
             }

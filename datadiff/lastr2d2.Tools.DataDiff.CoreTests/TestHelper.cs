@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Data;
+using System.Globalization;
 
-namespace lastr2d2.Tools.DataDiff.CoreTests
+namespace LastR2D2.Tools.DataDiff.CoreTests
 {
     internal static class TestHelper
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public static DataTable MockDataTable(string tableName = "test", bool withData = true)
         {
-            var table = new DataTable { TableName = tableName };
+            var table = new DataTable { TableName = tableName, Locale = CultureInfo.CurrentCulture };
             table.Columns.Add("int", typeof(int));
             table.Columns.Add("string", typeof(string));
             table.Columns.Add("datetime", typeof(DateTime));
@@ -26,9 +28,10 @@ namespace lastr2d2.Tools.DataDiff.CoreTests
             return table;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public static DataTable MockMergedDataTable(string tableName = "Result")
         {
-            var table = new DataTable { TableName = tableName };
+            var table = new DataTable { TableName = tableName, Locale = CultureInfo.CurrentCulture };
             table.Columns.Add("Id", typeof(int));
 
             table.Columns.Add("DV01_UAT", typeof(double));

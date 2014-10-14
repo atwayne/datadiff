@@ -1,14 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
-namespace lastr2d2.Tools.DataDiff.Core
+namespace LastR2D2.Tools.DataDiff.Core
 {
     public static class ExtensionMethods
     {
-        public static string TrimWhiteSpaces(this string str, HashSet<char> toExclude)
+        public static string TrimWhiteSpaces(this string text, HashSet<char> toExclude)
         {
-            var builder = new StringBuilder(str.Length);
-            foreach (var c in str)
+            if (string.IsNullOrEmpty(text))
+                return text;
+            if (toExclude == null)
+                throw new ArgumentNullException("toExclude");
+
+            var builder = new StringBuilder(text.Length);
+            foreach (var c in text)
             {
                 if (!toExclude.Contains(c))
                     builder.Append(c);
@@ -16,15 +22,23 @@ namespace lastr2d2.Tools.DataDiff.Core
             return builder.ToString();
         }
 
-        public static string TrimWhiteSpaces(this string str)
+        public static string TrimWhiteSpaces(this string text)
         {
-            return str.TrimWhiteSpaces(new HashSet<char>(new[] { ' ', '\t', '\n', '\r' }));
+            if (string.IsNullOrEmpty(text))
+                return text;
+            return text.TrimWhiteSpaces(new HashSet<char>(new[] { ' ', '\t', '\n', '\r' }));
         }
 
-        public static List<string> BreakIntoList(this string str, int maxCharacters)
+        public static IList<string> BreakIntoList(this string text, int maxCharacters)
         {
+            if (text == null)
+                return null;
+
+            if (text.Length == 0)
+                return new List<string>();
+
             var start = 0;
-            var totalLength = str.Length;
+            var totalLength = text.Length;
 
             var result = new List<string>();
             do
@@ -33,7 +47,7 @@ namespace lastr2d2.Tools.DataDiff.Core
                 if (maxCharacters < step)
                     step = maxCharacters;
 
-                var piece = str.Substring(start, step);
+                var piece = text.Substring(start, step);
                 start += step;
                 result.Add(piece);
             } while (start < totalLength);

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace lastr2d2.Tools.DataDiff.Core.Model
+namespace LastR2D2.Tools.DataDiff.Core.Model
 {
     [XmlTypeAttribute(AnonymousType = true)]
     [XmlRootAttribute(Namespace = "", IsNullable = false)]
@@ -60,7 +61,7 @@ namespace lastr2d2.Tools.DataDiff.Core.Model
         {
             if (Directory.Exists(innerTask.Report.Path))
             {
-                innerTask.Report.Path = Path.Combine(innerTask.Report.Path, string.Format("{0}_{1}.xlsx", innerTask.Name, DateTime.Now.ToString("yyyyMMddHHmmssfffffff")));
+                innerTask.Report.Path = Path.Combine(innerTask.Report.Path, string.Format(CultureInfo.CurrentCulture, "{0}_{1}.xlsx", innerTask.Name, DateTime.Now.ToString("yyyyMMddHHmmssfffffff", CultureInfo.CurrentCulture)));
             }
         }
 

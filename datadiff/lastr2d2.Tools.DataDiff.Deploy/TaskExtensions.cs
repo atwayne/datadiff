@@ -1,7 +1,7 @@
 ﻿using System.Linq;
-using lastr2d2.Tools.DataDiff.Core.Model;
+using LastR2D2.Tools.DataDiff.Core.Model;
 
-namespace lastr2d2.Tools.DataDiff.Deploy
+namespace LastR2D2.Tools.DataDiff.Deploy
 {
     internal static class TaskExtensions
     {

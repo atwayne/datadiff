@@ -2,7 +2,7 @@
 using System.Configuration;
 using System.Text.RegularExpressions;
 
-namespace lastr2d2.Tools.DataDiff.Deploy
+namespace LastR2D2.Tools.DataDiff.Deploy
 {
     internal static class Config
     {
