@@ -18,12 +18,15 @@ namespace LastR2D2.Tools.DataDiff.Deploy
 
         public static IDictionary<string, string> QueryParameters { get; set; }
 
-        public static void Load()
+        public static void Load(DeployOptions options = null)
         {
-            DefaultInputPath = ConfigurationManager.AppSettings["DefaultInputPath"] ?? "./tasks/";
-            DefaultOutputFile = ConfigurationManager.AppSettings["DefaultOutputFile"] ?? "./CompareResult.xlst";
+            var inputDefined = !string.IsNullOrEmpty(options.Input);
+            var outputDefined = !string.IsNullOrEmpty(options.Output);
+
+            DefaultInputPath = inputDefined ? options.Input : ConfigurationManager.AppSettings["DefaultInputPath"] ?? "./tasks/";
+            DefaultOutputFile = outputDefined ? options.Output : ConfigurationManager.AppSettings["DefaultOutputFile"] ?? "./CompareResult.xlst";
             DefaultInputFileNamePattern = ConfigurationManager.AppSettings["DefaultInputFileNamePattern"] ?? "*.xml";
-            DefaultDatabaseQueryTimeout = int.Parse(ConfigurationManager.AppSettings["DefaultInputFileNamePattern"] ?? "*300");
+            DefaultDatabaseQueryTimeout = int.Parse(ConfigurationManager.AppSettings["DefaultDatabaseQueryTimeout"] ?? "*300");
 
             QueryParameters = new Dictionary<string, string>();
             ReadQueryParameters();

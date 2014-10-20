@@ -12,7 +12,12 @@ namespace LastR2D2.Tools.DataDiff.Deploy
     {
         private static int Main(string[] args)
         {
-            Config.Load();
+            var options = new DeployOptions();
+            if (!CommandLine.Parser.Default.ParseArguments(args, options)) {
+                return -1;
+            }
+
+            Config.Load(options);
             var pathOfInput = (args == null || args.Length < 1) ? Config.DefaultInputPath : args[0];
 
             if (Directory.Exists(pathOfInput))
