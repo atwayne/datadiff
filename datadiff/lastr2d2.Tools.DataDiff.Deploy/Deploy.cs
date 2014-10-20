@@ -96,7 +96,7 @@ namespace LastR2D2.Tools.DataDiff.Deploy
         {
             var source = task.Sources[sourceIndex];
             var sqlServer = new SqlServerHelper(source.ConnectionString);
-            var dataTable = sqlServer.GetDataTable(source.QueryString, source.QueryParameters);
+            var dataTable = sqlServer.GetDataTable(source.QueryString, source.QueryParameters, Config.DefaultDatabaseQueryTimeout);
             dataTable.TableName = source.Name;
             dataTable.PrimaryKey = task.Columns.PrimaryColumns.Select(column => dataTable.Columns[column]).ToArray();
             return dataTable;
