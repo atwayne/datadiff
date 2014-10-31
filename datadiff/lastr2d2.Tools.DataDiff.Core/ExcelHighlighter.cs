@@ -9,7 +9,7 @@ namespace LastR2D2.Tools.DataDiff.Core
 {
     public class ExcelHighlighter : IExcelHighlighter
     {
-        private IColumnNameBuilder columnNameBuilder;
+        private readonly IColumnNameBuilder columnNameBuilder;
 
         public ExcelHighlighter(IColumnNameBuilder columnNameBuilder)
         {

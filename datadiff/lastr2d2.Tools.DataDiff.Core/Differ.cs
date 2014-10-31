@@ -49,6 +49,7 @@ namespace LastR2D2.Tools.DataDiff.Core
             DataExporter = new ExcelExporter();
             var highlightOptions = new HighlightOptions(leftDataSourceSetting.Name, rightDataSourceSetting.Name);
             ExportOptions = new ExcelExportOptions(task.Name, task.Report.Path, highlightOptions);
+
         }
 
         public void Diff()

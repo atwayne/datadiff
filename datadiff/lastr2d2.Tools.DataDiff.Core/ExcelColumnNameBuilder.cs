@@ -11,10 +11,10 @@ namespace LastR2D2.Tools.DataDiff.Core
             get { return suffixes; }
         }
 
-        private string[] suffixes;
+        private readonly string[] suffixes;
 
-        private string suffixOfGapColumn;
-        private string suffixOfCompareResultColumn;
+        private readonly string suffixOfGapColumn;
+        private readonly string suffixOfCompareResultColumn;
 
         public ExcelColumnNameBuilder(string suffixOfGapColumn, string suffixOfCompareResultColumn)
         {
@@ -58,12 +58,7 @@ namespace LastR2D2.Tools.DataDiff.Core
             if (IsCompareResultColumn(nameOfColumn))
                 return true;
 
-            foreach (var nameOfDataSource in nameOfDataSources)
-            {
-                if (IsCompareColumn(nameOfColumn, nameOfDataSource))
-                    return true;
-            }
-            return false;
+            return nameOfDataSources.Any(nameOfDataSource => IsCompareColumn(nameOfColumn, nameOfDataSource));
         }
 
         public ICollection<string> GetUnderlyingColumnNames(IEnumerable<string> nameOfColumns, ICollection<string> nameOfDataSources)

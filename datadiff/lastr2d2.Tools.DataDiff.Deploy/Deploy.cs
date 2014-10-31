@@ -1,9 +1,7 @@
-﻿using System;
-using System.Data;
+﻿using LastR2D2.Tools.DataDiff.Core;
+using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using LastR2D2.Tools.DataDiff.Core;
 using Task = LastR2D2.Tools.DataDiff.Core.Model.Task;
 
 namespace LastR2D2.Tools.DataDiff.Deploy
@@ -13,13 +11,23 @@ namespace LastR2D2.Tools.DataDiff.Deploy
         private static int Main(string[] args)
         {
             var options = new DeployOptions();
-            if (!CommandLine.Parser.Default.ParseArguments(args, options)) {
+            if (!CommandLine.Parser.Default.ParseArguments(args, options))
+            {
                 return -1;
             }
 
             Config.Load(options);
-            var pathOfInput = (args == null || args.Length < 1) ? Config.DefaultInputPath : args[0];
 
+            var diffOptions = new DiffOptions
+            {
+                DefaultOutputFilePath = Config.DefaultOutputFile,
+                DefaultTimeout = Config.DefaultDatabaseQueryTimeout,
+                QueryParameters = Config.QueryParameters,
+                SuffixOfGapColumn = "_Gap",
+                SuffixOfCompareResultColumn = "_Compare"
+            };
+
+            var pathOfInput = (args == null || args.Length < 1) ? Config.DefaultInputPath : args[0];
             if (Directory.Exists(pathOfInput))
             {
                 var xmlFiles = Directory.GetFiles(pathOfInput, Config.DefaultInputFileNamePattern);
@@ -28,7 +36,7 @@ namespace LastR2D2.Tools.DataDiff.Deploy
                 {
                     try
                     {
-                        ProcessTask(filePath);
+                        ProcessTask(filePath, diffOptions, Config.DefaultOutputFileLock);
                     }
                     catch (Exception exception)
                     {
@@ -38,7 +46,7 @@ namespace LastR2D2.Tools.DataDiff.Deploy
             }
             else if (File.Exists(pathOfInput))
             {
-                ProcessTask(pathOfInput);
+                ProcessTask(pathOfInput, diffOptions, Config.DefaultOutputFileLock);
             }
             else
             {
@@ -48,63 +56,17 @@ namespace LastR2D2.Tools.DataDiff.Deploy
             return 0;
         }
 
-        private static void ProcessTask(string path)
+        private static void ProcessTask(string path, DiffOptions diffOptions, object exportLockObject)
         {
             var tasks = Task.LoadFromXml(path);
-            Parallel.ForEach(tasks, new ParallelOptions() { MaxDegreeOfParallelism = 5 }, task =>
-            {
-                task.LoadConfig();
-                ProcessTask(task);
-            });
+            Parallel.ForEach(tasks, new ParallelOptions { MaxDegreeOfParallelism = 5 },
+                task => ProcessTask(task, diffOptions, exportLockObject));
         }
 
-        private static void ProcessTask(Task task)
+        private static void ProcessTask(Task task, DiffOptions diffOptions, object exportLockObject)
         {
-            var leftDataTable = PrepareDataTable(task, 0);
-            var rightDataTable = PrepareDataTable(task, 1);
-            var mergeResult = DataTableMerger.Merge(leftDataTable, rightDataTable,
-                compareColumnNames: task.Columns.CompareColumns.ToList(),
-                gapSettingForNumericColumn: task.GapMapping);
-
-            mergeResult.TableName = string.IsNullOrWhiteSpace(task.Name) ? "Result" : task.Name;
-
-            ExportToExcel(task, leftDataTable, rightDataTable, mergeResult);
-        }
-
-        private static void ExportToExcel(Task task, DataTable leftDataTable, DataTable rightDataTable, DataTable mergeResult)
-        {
-            lock (Config.DefaultOutputFileLock)
-            {
-                using (var workbook = ExcelGenerator.Export(mergeResult, path: task.Report.Path))
-                {
-                    var worksheet = workbook.Worksheet(mergeResult.TableName);
-                    ExcelGenerator.Highlight(worksheet,
-                        "_" + leftDataTable.TableName,
-                        "_" + rightDataTable.TableName);
-
-                    OrderWorksheets(workbook);
-                    workbook.SaveAs(task.Report.Path);
-                }
-            }
-        }
-
-        private static void OrderWorksheets(ClosedXML.Excel.XLWorkbook workbook)
-        {
-            var worksheets = workbook.Worksheets.OrderBy(sheet => sheet.Name, StringComparer.OrdinalIgnoreCase).ToArray();
-            for (int index = 0; index < worksheets.Length; index++)
-            {
-                workbook.Worksheet(worksheets[index].Name).Position = index + 1;
-            }
-        }
-
-        private static DataTable PrepareDataTable(Task task, int sourceIndex)
-        {
-            var source = task.Sources[sourceIndex];
-            var sqlServer = new SqlServerHelper(source.ConnectionString);
-            var dataTable = sqlServer.GetDataTable(source.QueryString, source.QueryParameters, Config.DefaultDatabaseQueryTimeout);
-            dataTable.TableName = source.Name;
-            dataTable.PrimaryKey = task.Columns.PrimaryColumns.Select(column => dataTable.Columns[column]).ToArray();
-            return dataTable;
+            var differ = new Differ(task, diffOptions, exportLockObject);
+            differ.Diff();
         }
     }
 }
