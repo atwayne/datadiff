@@ -4,10 +4,13 @@
     {
         public string SheetName { get; private set; }
 
-        public ExcelExportOptions(string sheetName, string path)
+        public HighlightOptions HighlightOptions { get; private set; }
+
+        public ExcelExportOptions(string sheetName, string path, HighlightOptions highlightOptions)
         {
             SheetName = sheetName;
             Path = path;
+            HighlightOptions = highlightOptions;
         }
     }
 }

@@ -18,9 +18,7 @@ namespace LastR2D2.Tools.DataDiff.Core
                 throw new ArgumentException("ExcelExportOptions only", "options");
 
             var sheetName = excelExportOptions.SheetName ?? dataTable.TableName;
-            XLWorkbook workbook;
-
-            workbook = string.IsNullOrEmpty(excelExportOptions.Path) || !File.Exists(excelExportOptions.Path) ?
+            var workbook = string.IsNullOrEmpty(excelExportOptions.Path) || !File.Exists(excelExportOptions.Path) ?
                     new XLWorkbook() : new XLWorkbook(excelExportOptions.Path);
 
             if (string.IsNullOrEmpty(sheetName))
@@ -35,19 +33,16 @@ namespace LastR2D2.Tools.DataDiff.Core
             if (highLighter != null)
             {
                 var worksheet = workbook.Worksheet(sheetName);
-                var highlightOptions = BuildHighlightOptions();
-                highLighter.Highlight(worksheet, highlightOptions);
+                highLighter.Highlight(worksheet, excelExportOptions.HighlightOptions);
             }
+
             OrderWorksheets(workbook);
             workbook.SaveAs(excelExportOptions.Path);
 
             return workbook;
         }
 
-        private static HighlightOptions BuildHighlightOptions()
-        {
-            return new HighlightOptions();
-        }
+
 
         private static void OrderWorksheets(XLWorkbook workbook)
         {
