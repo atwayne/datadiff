@@ -139,6 +139,11 @@ namespace LastR2D2.Tools.DataDiff.Core
                 , string.Format(CultureInfo.CurrentCulture, "AND(OR({0}),NOT(AND({0})))", string.Join(",", cellValueMissingFormulaFormats.Values)) // at least one cell (not all) is missing
                 );
 
+            ApplyConditionalFormatting(worksheet, formattingRange, equalFormulaFormat, missingFormulaFormat, similarFormulaFormat, notEqualFormulaFormat);
+        }
+
+        private static void ApplyConditionalFormatting(IXLWorksheet worksheet, IXLRange formattingRange, string equalFormulaFormat, string missingFormulaFormat, string similarFormulaFormat, string notEqualFormulaFormat)
+        {
             var top = worksheet.FirstRowUsed().RowNumber();
             formattingRange.AddConditionalFormat().WhenIsTrue(
                     PrepareFormula(string.Format(CultureInfo.CurrentCulture, equalFormulaFormat, top)))
