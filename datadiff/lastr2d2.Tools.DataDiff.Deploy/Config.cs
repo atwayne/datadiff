@@ -20,8 +20,8 @@ namespace LastR2D2.Tools.DataDiff.Deploy
 
         public static void Load(DeployOptions options = null)
         {
-            var inputDefined = !string.IsNullOrEmpty(options.Input);
-            var outputDefined = !string.IsNullOrEmpty(options.Output);
+            var inputDefined = options != null && !string.IsNullOrEmpty(options.Input);
+            var outputDefined = options != null && !string.IsNullOrEmpty(options.Output);
 
             DefaultInputPath = inputDefined ? options.Input : ConfigurationManager.AppSettings["DefaultInputPath"] ?? "./tasks/";
             DefaultOutputFile = outputDefined ? options.Output : ConfigurationManager.AppSettings["DefaultOutputFile"] ?? "./CompareResult.xlst";
