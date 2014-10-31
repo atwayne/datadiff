@@ -2,7 +2,7 @@
 
 namespace LastR2D2.Tools.DataDiff.Core.Interfaces
 {
-    public class IDataMerger
+    public interface IDataMerger
     {
         DataTable Merge();
     }

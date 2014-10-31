@@ -56,7 +56,7 @@
     <Compile Include="DataMerger.cs" />
     <Compile Include="DataReadOptions.cs" />
     <Compile Include="DataTableMerger.cs" />
-    <Compile Include="Diff.cs" />
+    <Compile Include="Differ.cs" />
     <Compile Include="DiffOptions.cs" />
     <Compile Include="ExcelColumnNameBuilder.cs" />
     <Compile Include="ExcelExporter.cs" />
@@ -72,7 +72,7 @@
     <Compile Include="Interfaces\IDataExporter.cs" />
     <Compile Include="Interfaces\IDataMerger.cs" />
     <Compile Include="Interfaces\IDataReader.cs" />
-    <Compile Include="Interfaces\IDiff.cs" />
+    <Compile Include="Interfaces\IDiffer.cs" />
     <Compile Include="Interfaces\IExcelHighlighter.cs" />
     <Compile Include="MergeOptions.cs" />
     <Compile Include="Model\Field.cs" />
@@ -85,9 +85,9 @@
     <Compile Include="Model\Tasks.cs" />
     <Compile Include="Model\TaskSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SQLServerDataReader.cs" />
+    <Compile Include="SqlServerDataReader.cs" />
     <Compile Include="SQLServerHelper.cs" />
-    <Compile Include="SQLServerReaderOptions.cs" />
+    <Compile Include="SqlServerReaderOptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

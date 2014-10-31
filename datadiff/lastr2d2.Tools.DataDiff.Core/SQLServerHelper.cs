@@ -20,7 +20,7 @@ namespace LastR2D2.Tools.DataDiff.Core
         public DataTable GetDataTable(string query, IDictionary<string, string> parameters = null, int queryTimeout = 300)
         {
             Contract.Requires(!string.IsNullOrEmpty(query));
-            var dataTable = new DataTable() { Locale = CultureInfo.CurrentCulture };
+            var dataTable = new DataTable { Locale = CultureInfo.CurrentCulture };
             using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();

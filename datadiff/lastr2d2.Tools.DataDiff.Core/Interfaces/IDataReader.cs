@@ -2,8 +2,8 @@
 
 namespace LastR2D2.Tools.DataDiff.Core.Interfaces
 {
-    interface IDataReader
+    public interface IDataReader
     {
-        DataTable ReadData(DataReadOptions options);
+        DataTable Read(DataReadOptions options);
     }
 }

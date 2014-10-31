@@ -21,7 +21,9 @@ namespace LastR2D2.Tools.DataDiff.Core
             if (worksheet == null)
                 throw new ArgumentNullException("worksheet");
             var headerRow = worksheet.FirstRowUsed();
-            var compareRelatedColumns = FindColumnsBySuffix(headerRow, options.NameOfLeftDataSource, options.NameOfRightDataSource);
+            var compareRelatedColumns =
+                FindColumnsBySuffix(headerRow, options.NameOfLeftDataSource, options.NameOfRightDataSource)
+                    .ToList();
 
             var compareRelatedColumnNames = compareRelatedColumns.Select(l => l.Key);
 
@@ -181,8 +183,7 @@ namespace LastR2D2.Tools.DataDiff.Core
                 , string.Join(",", cellValueSimilarFormulaFormats.Values)); // at least one cell is similar to its pair
 
             // not equal means
-            var notEqualFormulaFormat = string.Format(CultureInfo.CurrentCulture, "OR({0})", string.Join(",", cellValueNotEqualFormulaFormats.Values));
-            notEqualFormulaFormat = string.Format(CultureInfo.CurrentCulture, "OR({0},{1})" // either
+            var notEqualFormulaFormat = string.Format(CultureInfo.CurrentCulture, "OR({0},{1})" // either
                 , string.Join(",", cellValueNotEqualFormulaFormats.Values) // any cell is different with its pair or
                 , string.Format(CultureInfo.CurrentCulture, "AND(OR({0}),NOT(AND({0})))", string.Join(",", cellValueMissingFormulaFormats.Values)) // at least one cell (not all) is missing
                 );

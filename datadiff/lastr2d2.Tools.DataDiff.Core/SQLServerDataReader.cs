@@ -5,15 +5,10 @@ using IDataReader = LastR2D2.Tools.DataDiff.Core.Interfaces.IDataReader;
 
 namespace LastR2D2.Tools.DataDiff.Core
 {
-    public class SQLServerDataReader : IDataReader
+    public class SqlServerDataReader : IDataReader
     {
-        public SQLServerDataReader()
-        {
-            
-        }
-
         public DataTable Read(DataReadOptions options) {
-            var sqlServerDataReaderOptions = options as SQLServerReaderOptions;
+            var sqlServerDataReaderOptions = options as SqlServerReaderOptions;
             if (sqlServerDataReaderOptions == null)
                 throw new ArgumentException("SQLServerReaderOptions only", "options");
 

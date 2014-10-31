@@ -9,18 +9,18 @@ namespace LastR2D2.Tools.DataDiff.Core
 {
     public class DataMerger : IDataMerger
     {
-        private DataTable leftTable { get; set; }
-        private DataTable rightTable { get; set; }
-        private MergeOptions mergeOptions { get; set; }
+        private DataTable LeftTable { get; set; }
+        private DataTable RightTable { get; set; }
+        private MergeOptions MergeOptions { get; set; }
 
-        private List<Field> allColumns { get; set; }
-        private List<Field> nonPrimaryColumns { get; set; }
-        private List<Field> primaryColumns { get; set; }
-        private ICollection<string> compareColumnNames { get; set; }
-        private string leftTableAlias { get; set; }
-        private string rightTableAlias { get; set; }
+        private List<Field> AllColumns { get; set; }
+        private List<Field> NonPrimaryColumns { get; set; }
+        private List<Field> PrimaryColumns { get; set; }
+        private ICollection<string> CompareColumnNames { get; set; }
+        private string LeftTableAlias { get; set; }
+        private string RightTableAlias { get; set; }
 
-        private IColumnNameBuilder columnNameBuilder { get; set; }
+        private IColumnNameBuilder ColumnNameBuilder { get; set; }
         public DataMerger(DataTable leftTable, DataTable rightTable, MergeOptions mergeOptions, IColumnNameBuilder columnNameBuilder)
         {
 
@@ -29,58 +29,56 @@ namespace LastR2D2.Tools.DataDiff.Core
             if (rightTable == null)
                 throw new ArgumentNullException("rightTable");
 
-            this.leftTable = leftTable;
-            this.rightTable = rightTable;
-            this.mergeOptions = mergeOptions;
+            LeftTable = leftTable;
+            RightTable = rightTable;
+            MergeOptions = mergeOptions;
 
-            allColumns = GetAllColumns();
-            nonPrimaryColumns = allColumns.Where(field => !field.IsKey).ToList();
-            primaryColumns = allColumns.Where(field => field.IsKey).ToList();
+            AllColumns = GetAllColumns();
+            NonPrimaryColumns = AllColumns.Where(field => !field.IsKey).ToList();
+            PrimaryColumns = AllColumns.Where(field => field.IsKey).ToList();
 
-            leftTableAlias = mergeOptions.leftTableAlias ?? leftTable.TableName;
-            rightTableAlias = mergeOptions.rightTableAlias ?? rightTable.TableName;
+            LeftTableAlias = mergeOptions.LeftTableAlias ?? leftTable.TableName;
+            RightTableAlias = mergeOptions.RightTableAlias ?? rightTable.TableName;
 
-            this.columnNameBuilder = columnNameBuilder;
+            ColumnNameBuilder = columnNameBuilder;
         }
 
         public DataTable Merge()
         {
-            compareColumnNames =
-                (mergeOptions.compareColumnNames == null || !mergeOptions.compareColumnNames.Any())
-                ? nonPrimaryColumns.Select(column => column.Name).ToList()
-                : mergeOptions.compareColumnNames;
-
-            var keyFields = allColumns.Where(field => field.IsKey).ToList();
+            CompareColumnNames =
+                (MergeOptions.CompareColumnNames == null || !MergeOptions.CompareColumnNames.Any())
+                ? NonPrimaryColumns.Select(column => column.Name).ToList()
+                : MergeOptions.CompareColumnNames;
 
             var result = BuildDataTableTemplate();
 
-            MergeInto(result, leftTable, rightTable, leftTableAlias, rightTableAlias);
-            MergeInto(result, rightTable, leftTable, rightTableAlias, leftTableAlias);
+            MergeInto(result, LeftTable, RightTable, LeftTableAlias, RightTableAlias);
+            MergeInto(result, RightTable, LeftTable, RightTableAlias, LeftTableAlias);
 
             return result;
         }
 
         private DataTable BuildDataTableTemplate()
         {
-            var result = rightTable.Clone();
+            var result = RightTable.Clone();
 
-            foreach (var column in nonPrimaryColumns)
+            foreach (var column in NonPrimaryColumns)
             {
                 var columnType = result.Columns[column.Name].DataType;
                 result.Columns.Remove(column.Name);
-                var leftColumnName = columnNameBuilder.BuildColumName(leftTableAlias, column.Name);
-                var rightColumnName = columnNameBuilder.BuildColumName(rightTableAlias, column.Name);
+                var leftColumnName = ColumnNameBuilder.BuildColumName(LeftTableAlias, column.Name);
+                var rightColumnName = ColumnNameBuilder.BuildColumName(RightTableAlias, column.Name);
                 result.Columns.Add(leftColumnName, columnType);
                 result.Columns.Add(rightColumnName, columnType);
             }
 
-            foreach (var columnName in compareColumnNames)
+            foreach (var columnName in CompareColumnNames)
             {
-                var column = allColumns.FirstOrDefault(c => c.Name.Equals(columnName));
+                var column = AllColumns.FirstOrDefault(c => c.Name.Equals(columnName));
                 if (column != null)
                 {
-                    var gapColumnName = columnNameBuilder.BuildGapColumnName(column.Name);
-                    var compareColumnName = columnNameBuilder.BuildCompareResultColumnName(column.Name);
+                    var gapColumnName = ColumnNameBuilder.BuildGapColumnName(column.Name);
+                    var compareColumnName = ColumnNameBuilder.BuildCompareResultColumnName(column.Name);
 
                     result.Columns.Add(gapColumnName, typeof(double));
                     result.Columns.Add(compareColumnName, typeof(double));
@@ -106,22 +104,22 @@ namespace LastR2D2.Tools.DataDiff.Core
                     continue;
                 newRow = result.NewRow();
 
-                foreach (var primaryKey in primaryColumns)
+                foreach (var primaryKey in PrimaryColumns)
                 {
                     newRow[primaryKey.Name] = row[primaryKey.Name];
                 }
 
-                foreach (var nonPrimaryKey in nonPrimaryColumns)
+                foreach (var nonPrimaryKey in NonPrimaryColumns)
                 {
-                    var leftColumnName = columnNameBuilder.BuildColumName(alias, nonPrimaryKey.Name);
-                    var rightColumnName = columnNameBuilder.BuildColumName(aliasOfReferenceTable, nonPrimaryKey.Name);
+                    var leftColumnName = ColumnNameBuilder.BuildColumName(alias, nonPrimaryKey.Name);
+                    var rightColumnName = ColumnNameBuilder.BuildColumName(aliasOfReferenceTable, nonPrimaryKey.Name);
 
-                    var gapColumnName = columnNameBuilder.BuildGapColumnName(nonPrimaryKey.Name);
+                    var gapColumnName = ColumnNameBuilder.BuildGapColumnName(nonPrimaryKey.Name);
 
                     newRow[leftColumnName] = row[nonPrimaryKey.Name];
                     newRow[rightColumnName] = matchingRow == null ? DBNull.Value : matchingRow[nonPrimaryKey.Name];
 
-                    if (compareColumnNames.Contains(nonPrimaryKey.Name, StringComparer.OrdinalIgnoreCase))
+                    if (CompareColumnNames.Contains(nonPrimaryKey.Name, StringComparer.OrdinalIgnoreCase))
                     {
                         newRow[gapColumnName] = nonPrimaryKey.Gap;
                     }
@@ -133,8 +131,8 @@ namespace LastR2D2.Tools.DataDiff.Core
 
         private List<Field> GetAllColumns()
         {
-            var sourceTable = leftTable;
-            var gapList = mergeOptions.gapSettingForNumericColumn;
+            var sourceTable = LeftTable;
+            var gapList = MergeOptions.GapSettingForNumericColumn;
 
             var fields = new List<Field>();
             for (int i = 0; i < sourceTable.Columns.Count; i++)

@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lastr2d2.Tools.DataDiff.Deploy", "lastr2d2.Tools.DataDiff.Deploy\lastr2d2.Tools.DataDiff.Deploy.csproj", "{030D8C4D-5915-4DCD-A9C6-38F73EBD64E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lastr2d2.Tools.DataDiff.Core", "lastr2d2.Tools.DataDiff.Core\lastr2d2.Tools.DataDiff.Core.csproj", "{B2F2641B-B6F0-4945-B421-260C3081F178}"
