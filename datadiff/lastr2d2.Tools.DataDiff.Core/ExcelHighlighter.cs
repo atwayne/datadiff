@@ -192,7 +192,7 @@ namespace LastR2D2.Tools.DataDiff.Core
         }
 
         private static void ApplyFormulaToCompareResultColumns(IDictionary<string, string> equalFormulaFormat, IDictionary<string, string> missingFormulaFormat
-            , IDictionary<string, string> similarFormulaFormat, IXLWorksheet worksheet, ICollection<string> compareColumnLetters, int rowNumber)
+            , IDictionary<string, string> similarFormulaFormat, IXLWorksheet worksheet, IEnumerable<string> compareColumnLetters, int rowNumber)
         {
             foreach (var compareColumnLetter in compareColumnLetters)
             {
