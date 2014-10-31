@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace LastR2D2.Tools.DataDiff.Core
 {
-    class DiffOptions
+    public class DiffOptions
     {
+        public IDictionary<string, string> QueryParameters { get; set; }
+        public int DefaultTimeout { get; set; }
+        public string SuffixOfGapColumn { get; set; }
+        public string SuffixOfCompareResultColumn { get; set; }
+        public string DefaultOutputFilePath { get; set; }
     }
 }

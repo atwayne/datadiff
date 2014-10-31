@@ -8,7 +8,7 @@ namespace LastR2D2.Tools.DataDiff.Core
 {
     public class SqlServerHelper : IDataHelper
     {
-        private string connectionString;
+        private readonly string connectionString;
 
         public SqlServerHelper(string connectionString)
         {

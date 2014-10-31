@@ -2,6 +2,12 @@
 {
     public class ExcelExportOptions : ExportOptions
     {
-        public string SheetName { get; set; }
+        public string SheetName { get; private set; }
+
+        public ExcelExportOptions(string sheetName, string path)
+        {
+            SheetName = sheetName;
+            Path = path;
+        }
     }
 }
