@@ -12,6 +12,10 @@ namespace LastR2D2.Tools.DataDiff.Deploy
 
         public static string DefaultOutputFile { get; set; }
 
+        public static string DefaultSuffixOfGapColumn { get; set; }
+
+        public static string DefaultSuffixOfCompareColumn { get; set; }
+
         public static int DefaultDatabaseQueryTimeout { get; set; }
 
         public static object DefaultOutputFileLock { get; private set; }
@@ -25,6 +29,9 @@ namespace LastR2D2.Tools.DataDiff.Deploy
 
             DefaultInputPath = inputDefined ? options.Input : ConfigurationManager.AppSettings["DefaultInputPath"] ?? "./tasks/";
             DefaultOutputFile = outputDefined ? options.Output : ConfigurationManager.AppSettings["DefaultOutputFile"] ?? "./CompareResult.xlst";
+            DefaultSuffixOfGapColumn = ConfigurationManager.AppSettings["DefaultSuffixOfGapColumn"] ?? "Gap";
+            DefaultSuffixOfCompareColumn = ConfigurationManager.AppSettings["DefaultSuffixOfCompareColumn"] ?? "Compare";
+
             DefaultInputFileNamePattern = ConfigurationManager.AppSettings["DefaultInputFileNamePattern"] ?? "*.xml";
             DefaultDatabaseQueryTimeout = int.Parse(ConfigurationManager.AppSettings["DefaultDatabaseQueryTimeout"] ?? "*300");
 
@@ -41,16 +48,16 @@ namespace LastR2D2.Tools.DataDiff.Deploy
 
             var keys = ConfigurationManager.AppSettings.Keys;
 
-            for (int i = 0; i < keys.Count; i++)
+            for (var i = 0; i < keys.Count; i++)
             {
                 var key = keys[i];
                 var match = regex.Match(key);
-                if (match.Success)
-                {
-                    var parameterName = match.Groups["name"].Value;
-                    var parameterValue = ConfigurationManager.AppSettings[key];
-                    QueryParameters[parameterName] = parameterValue;
-                }
+                if (!match.Success)
+                    continue;
+
+                var parameterName = match.Groups["name"].Value;
+                var parameterValue = ConfigurationManager.AppSettings[key];
+                QueryParameters[parameterName] = parameterValue;
             }
         }
     }

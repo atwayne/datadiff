@@ -23,8 +23,8 @@ namespace LastR2D2.Tools.DataDiff.Deploy
                 DefaultOutputFilePath = Config.DefaultOutputFile,
                 DefaultTimeout = Config.DefaultDatabaseQueryTimeout,
                 QueryParameters = Config.QueryParameters,
-                SuffixOfGapColumn = "_Gap",
-                SuffixOfCompareResultColumn = "_Compare"
+                SuffixOfGapColumn = Config.DefaultSuffixOfGapColumn,
+                SuffixOfCompareResultColumn = Config.DefaultSuffixOfCompareColumn
             };
 
             var pathOfInput = (args == null || args.Length < 1) ? Config.DefaultInputPath : args[0];
@@ -60,13 +60,11 @@ namespace LastR2D2.Tools.DataDiff.Deploy
         {
             var tasks = Task.LoadFromXml(path);
             Parallel.ForEach(tasks, new ParallelOptions { MaxDegreeOfParallelism = 5 },
-                task => ProcessTask(task, diffOptions, exportLockObject));
-        }
-
-        private static void ProcessTask(Task task, DiffOptions diffOptions, object exportLockObject)
-        {
-            var differ = new Differ(task, diffOptions, exportLockObject);
-            differ.Diff();
+                task =>
+                {
+                    var differ = new Differ(task, diffOptions, exportLockObject);
+                    differ.Diff();
+                });
         }
     }
 }
