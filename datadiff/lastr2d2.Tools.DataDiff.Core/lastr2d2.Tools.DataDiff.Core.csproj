@@ -55,7 +55,7 @@
   <ItemGroup>
     <Compile Include="DataMerger.cs" />
     <Compile Include="DataReadOptions.cs" />
-    <Compile Include="Differ.cs" />
+    <Compile Include="DiffClient.cs" />
     <Compile Include="DiffOptions.cs" />
     <Compile Include="ExcelColumnNameBuilder.cs" />
     <Compile Include="ExcelExporter.cs" />
@@ -70,7 +70,7 @@
     <Compile Include="Interfaces\IDataExporter.cs" />
     <Compile Include="Interfaces\IDataMerger.cs" />
     <Compile Include="Interfaces\IDataReader.cs" />
-    <Compile Include="Interfaces\IDiffer.cs" />
+    <Compile Include="Interfaces\IDiffClient.cs" />
     <Compile Include="Interfaces\IExcelHighlighter.cs" />
     <Compile Include="MergeOptions.cs" />
     <Compile Include="Model\Field.cs" />
