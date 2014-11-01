@@ -4,7 +4,7 @@ using Task = LastR2D2.Tools.DataDiff.Core.Model.Task;
 
 namespace LastR2D2.Tools.DataDiff.Core
 {
-    public class Differ : IDiffer
+    public class DiffClient : IDiffClient
     {
         private IDataReader ReaderOfLeftDataSource { get; set; }
         private IDataReader ReaderOfRightDataSource { get; set; }
@@ -22,7 +22,7 @@ namespace LastR2D2.Tools.DataDiff.Core
 
         private object ExportLockObject { get; set; }
 
-        public Differ(Task task, DiffOptions options, object exportLockObject)
+        public DiffClient(Task task, DiffOptions options, object exportLockObject)
         {
             task.LoadConfig(options.DefaultOutputFilePath, options.QueryParameters);
 

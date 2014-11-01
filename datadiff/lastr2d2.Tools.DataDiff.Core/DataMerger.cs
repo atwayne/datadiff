@@ -21,6 +21,7 @@ namespace LastR2D2.Tools.DataDiff.Core
         private string RightTableAlias { get; set; }
 
         private IColumnNameBuilder ColumnNameBuilder { get; set; }
+
         public DataMerger(DataTable leftTable, DataTable rightTable, MergeOptions mergeOptions, IColumnNameBuilder columnNameBuilder)
         {
 
@@ -135,7 +136,7 @@ namespace LastR2D2.Tools.DataDiff.Core
             var gapList = MergeOptions.GapSettingForNumericColumn;
 
             var fields = new List<Field>();
-            for (int i = 0; i < sourceTable.Columns.Count; i++)
+            for (var i = 0; i < sourceTable.Columns.Count; i++)
             {
                 var column = sourceTable.Columns[i];
 

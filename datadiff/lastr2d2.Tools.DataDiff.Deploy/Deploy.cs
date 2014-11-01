@@ -62,7 +62,7 @@ namespace LastR2D2.Tools.DataDiff.Deploy
             Parallel.ForEach(tasks, new ParallelOptions { MaxDegreeOfParallelism = 5 },
                 task =>
                 {
-                    var differ = new Differ(task, diffOptions, exportLockObject);
+                    var differ = new DiffClient(task, diffOptions, exportLockObject);
                     differ.Diff();
                 });
         }
