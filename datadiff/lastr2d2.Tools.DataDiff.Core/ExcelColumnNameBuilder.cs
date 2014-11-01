@@ -63,11 +63,28 @@ namespace LastR2D2.Tools.DataDiff.Core
 
         public ICollection<string> GetUnderlyingColumnNames(IEnumerable<string> nameOfColumns, ICollection<string> nameOfDataSources)
         {
-            return nameOfColumns
+
+            var columns = nameOfColumns.ToList();
+            return columns
                 .Where(l => IsGeneratedColumn(l, nameOfDataSources))
                 .Select(l => l.Substring(0, l.LastIndexOf('_')))
                 .Distinct()
+                .Where(l =>
+                {
+                    var gapColumnName = BuildGapColumnName(l);
+                    if (!columns.Contains(gapColumnName))
+                        return false;
+
+                    var compareColumnName = BuildCompareResultColumnName(l);
+                    if (!columns.Contains(compareColumnName))
+                        return false;
+
+                    return nameOfDataSources.Select(dataSource => BuildColumName(dataSource, l)).All(columns.Contains);
+                })
+                .Distinct()
                 .ToList();
+
+
         }
     }
 }
