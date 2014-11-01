@@ -46,7 +46,7 @@ namespace LastR2D2.Tools.DataDiff.Core
             return nameOfColumn.EndsWith("_" + suffixOfCompareResultColumn);
         }
 
-        public bool IsCompareColumn(string nameOfDataSource, string nameOfColumn)
+        public bool IsCompareColumn(string nameOfColumn, string nameOfDataSource)
         {
             return nameOfColumn.EndsWith("_" + nameOfDataSource);
         }
@@ -66,6 +66,7 @@ namespace LastR2D2.Tools.DataDiff.Core
             return nameOfColumns
                 .Where(l => IsGeneratedColumn(l, nameOfDataSources))
                 .Select(l => l.Substring(0, l.LastIndexOf('_')))
+                .Distinct()
                 .ToList();
         }
     }
