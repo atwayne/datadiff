@@ -22,7 +22,7 @@ namespace LastR2D2.Tools.DataDiff.Deploy
 
         public static IDictionary<string, string> QueryParameters { get; set; }
 
-        public static void Load(DeployOptions options = null)
+        public static void Load(CommandLineOptions options = null)
         {
             var inputDefined = options != null && !string.IsNullOrEmpty(options.Input);
             var outputDefined = options != null && !string.IsNullOrEmpty(options.Output);

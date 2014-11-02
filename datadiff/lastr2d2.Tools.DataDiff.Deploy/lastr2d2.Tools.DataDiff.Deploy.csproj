@@ -58,8 +58,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
-    <Compile Include="Deploy.cs" />
-    <Compile Include="DeployOptions.cs" />
+    <Compile Include="MainApp.cs" />
+    <Compile Include="CommandLineOptions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

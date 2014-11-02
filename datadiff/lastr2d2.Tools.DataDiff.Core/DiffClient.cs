@@ -22,7 +22,7 @@ namespace LastR2D2.Tools.DataDiff.Core
 
         private object ExportLockObject { get; set; }
 
-        public DiffClient(Task task, DiffOptions options, object exportLockObject)
+        public DiffClient(Task task, DiffClientOptions options, object exportLockObject)
         {
             task.LoadConfig(options.DefaultOutputFilePath, options.QueryParameters);
 

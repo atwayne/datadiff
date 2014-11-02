@@ -56,7 +56,7 @@
     <Compile Include="DataMerger.cs" />
     <Compile Include="DataReadOptions.cs" />
     <Compile Include="DiffClient.cs" />
-    <Compile Include="DiffOptions.cs" />
+    <Compile Include="DiffClientOptions.cs" />
     <Compile Include="ExcelColumnNameBuilder.cs" />
     <Compile Include="ExcelExporter.cs" />
     <Compile Include="ExcelExportOptions.cs" />
